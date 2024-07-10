@@ -153,23 +153,33 @@ const TechnologyRadar = () => {
         console.log(`Clicked on ${quadrant}`);
     };
 
-    const QuadrantLabel = ({ x, y, textAnchor, children, onClick }) => (
-        <g
-            onClick={onClick}
-            style={{ cursor: 'pointer' }}
-        >
-            <text
-                x={x}
-                y={y}
-                fontSize="18"
-                fontWeight="bold"
-                fill="#333"
-                textAnchor={textAnchor}
+    const QuadrantLabel = ({ x, y, textAnchor, children, onClick, multiline }) => {
+        const [firstLine, secondLine] = multiline ? children.split('&') : [children];
+        return (
+            <g
+                onClick={onClick}
+                style={{ cursor: 'pointer' }}
             >
-                {children} ▶️
-            </text>
-        </g>
-    );
+                <text
+                    x={x}
+                    y={y}
+                    fontSize="18"
+                    fontWeight="bold"
+                    fill="#333"
+                    textAnchor={textAnchor}
+                >
+                    {firstLine}
+                    {multiline && (
+                        <tspan x={x} dy="1.2em">
+                            & {secondLine}
+                        </tspan>
+                    )}
+                    <tspan dx="5">▶️</tspan>
+                </text>
+            </g>
+        );
+    };
+
 
     return (
         <Box sx={{
@@ -275,8 +285,14 @@ const TechnologyRadar = () => {
                                 <QuadrantLabel x="10" y={svgSize.height - 20} textAnchor="start" onClick={() => handleQuadrantClick("Platforms")}>
                                     Platforms
                                 </QuadrantLabel>
-                                <QuadrantLabel x={svgSize.width - 10} y={svgSize.height - 20} textAnchor="end" onClick={() => handleQuadrantClick("Languages & Frameworks")}>
-                                    Languages <br/>& Frameworks
+                                <QuadrantLabel
+                                    x={svgSize.width - 10}
+                                    y={svgSize.height - 45}
+                                    textAnchor="end"
+                                    onClick={() => handleQuadrantClick("Languages & Frameworks")}
+                                    multiline={true}
+                                >
+                                    Languages & Frameworks
                                 </QuadrantLabel>
                             </>
                         )}
