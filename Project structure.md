@@ -2,12 +2,15 @@
 
 
 - tech-radar/
+  - .env.development
+  - .env.production
   - .eslintrc.cjs
   - .gitignore
   - dirstruct.ps1
   - index.html
   - package.json
   - package-lock.json
+  - Project structure.md
   - README.md
   - vite.config.js
   - .git/
@@ -23,5 +26,6 @@
     - assets/
       - react.svg
     - components/
+      - DataManager.jsx
       - Radar.jsx
 
