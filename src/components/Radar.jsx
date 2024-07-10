@@ -1,4 +1,3 @@
-import InfoIcon from "@mui/icons-material/Info";
 import {
     Box,
     List,
@@ -213,9 +212,10 @@ const TechnologyRadar = () => {
                     height: '100%',
                     overflow: 'hidden'
                 }}>
-                    <Typography variant="h4" component="h2" align="center" sx={{ mb: 2 }}>
+                    <Typography variant="h4" component="h2" sx={{ mb: 0 }}>
                         Technology Radar
                     </Typography>
+                    <Typography variant="body2" sx={{ mb: 2 }}>Hover over a technology for more information</Typography>
                     <Box
                         ref={radarRef}
                         component="svg"
@@ -349,12 +349,6 @@ const TechnologyRadar = () => {
                     <Typography variant="body2"><strong>Date Added:</strong> {hoveredTech.date}</Typography>
                 </Paper>
             )}
-
-            {/* Info Icon */}
-            <Box sx={{ mt: 2, mb: 2, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <InfoIcon sx={{ mr: 1 }} />
-                <Typography variant="body2">Hover over a technology for more information</Typography>
-            </Box>
         </Box>
     );
 };
