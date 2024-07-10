@@ -1,5 +1,6 @@
 import {
     Box,
+    CircularProgress,
     List,
     ListItem,
     ListItemIcon,
@@ -10,39 +11,13 @@ import {
     useTheme
 } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
-
+import { useTechnologies } from './DataManager';
 
 const QUADRANTS = ["Techniques", "Tools", "Platforms", "Languages & Frameworks"];
 const RINGS = ["Adopt", "Trial", "Assess", "Hold"];
 
-const TECHNOLOGIES = {
-    techniques: [
-        { id: 1, name: "Micro Frontends", ring: "Adopt", status: "No change", description: "Architectural style where independently deliverable frontend applications are composed into a greater whole", sponsor: "Frontend Team", date: "2023-05-15" },
-        { id: 2, name: "Serverless Architecture", ring: "Trial", status: "Moved in/out", description: "A way to build and run applications and services without having to manage infrastructure", sponsor: "Cloud Team", date: "2023-06-22" },
-        { id: 3, name: "Event Sourcing", ring: "Assess", status: "New", description: "Storing all changes to the application state as a sequence of events", sponsor: "Backend Team", date: "2023-07-30" },
-        { id: 4, name: "Blockchain", ring: "Hold", status: "No change", description: "A distributed ledger technology that allows for secure, transparent and tamper-proof transactions", sponsor: "Innovation Department", date: "2023-04-10" }
-    ],
-    tools: [
-        { id: 5, name: "Docker", ring: "Adopt", status: "No change", description: "A platform for developing, shipping, and running applications in containers", sponsor: "DevOps Team", date: "2023-03-05" },
-        { id: 6, name: "Kubernetes", ring: "Trial", status: "Moved in/out", description: "An open-source system for automating deployment, scaling, and management of containerized applications", sponsor: "Infrastructure Team", date: "2023-08-17" },
-        { id: 7, name: "Terraform", ring: "Assess", status: "New", description: "An open-source infrastructure as code software tool that enables you to safely and predictably create, change, and improve infrastructure", sponsor: "Cloud Team", date: "2023-09-01" },
-        { id: 8, name: "Jenkins X", ring: "Hold", status: "No change", description: "An open source automated CI/CD solution for cloud native applications on Kubernetes", sponsor: "DevOps Team", date: "2023-02-28" }
-    ],
-    platforms: [
-        { id: 9, name: "AWS", ring: "Adopt", status: "No change", description: "A comprehensive and widely adopted cloud platform, offering over 200 fully featured services", sponsor: "Infrastructure Team", date: "2023-01-15" },
-        { id: 10, name: "Google Cloud Platform", ring: "Trial", status: "Moved in/out", description: "A suite of cloud computing services that runs on the same infrastructure that Google uses internally", sponsor: "Cloud Team", date: "2023-07-20" },
-        { id: 11, name: "Azure", ring: "Assess", status: "New", description: "Microsoft's public cloud computing platform, providing a range of cloud services", sponsor: "IT Department", date: "2023-08-05" },
-        { id: 12, name: "Heroku", ring: "Hold", status: "No change", description: "A cloud platform as a service supporting several programming languages", sponsor: "Development Team", date: "2023-04-30" }
-    ],
-    languages_and_frameworks: [
-        { id: 13, name: "TypeScript", ring: "Adopt", status: "No change", description: "A typed superset of JavaScript that compiles to plain JavaScript", sponsor: "Frontend Team", date: "2023-02-10" },
-        { id: 14, name: "React", ring: "Trial", status: "Moved in/out", description: "A JavaScript library for building user interfaces", sponsor: "UI Team", date: "2023-06-15" },
-        { id: 15, name: "GraphQL", ring: "Assess", status: "New", description: "A query language for APIs and a runtime for executing those queries with your existing data", sponsor: "API Team", date: "2023-09-10" },
-        { id: 16, name: "Angular", ring: "Hold", status: "No change", description: "A platform for building mobile and desktop web applications", sponsor: "Frontend Team", date: "2023-03-20" }
-    ]
-};
-
 const TechnologyRadar = () => {
+    const { technologies, loading, error } = useTechnologies();
     const [hoveredTech, setHoveredTech] = useState(null);
     const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
     const radarRef = useRef(null);
@@ -103,18 +78,17 @@ const TechnologyRadar = () => {
         return { x, y };
     };
 
-    // Recalculate positions when SVG size changes
-    const technologiesWithPositions = React.useMemo(() =>
-        Object.entries(TECHNOLOGIES).flatMap(([quadrantKey, techs]) => {
+    const technologiesWithPositions = React.useMemo(() => {
+        if (!technologies) return [];
+        return Object.entries(technologies).flatMap(([quadrantKey, techs]) => {
             const quadrant = quadrantKey.replace("_", " & ");
             return techs.map(tech => ({
                 ...tech,
                 quadrant,
                 position: calculatePosition(tech, quadrant)
             }));
-        }),
-        [svgSize]
-    );
+        });
+    }, [svgSize, technologies]);
 
     const getColor = (quadrant) => {
         const colors = ["#86B782", "#1EBB9B", "#F38A3E", "#B32059"];
@@ -179,6 +153,45 @@ const TechnologyRadar = () => {
         );
     };
 
+    if (loading) {
+        return (
+            <Box 
+                sx={{ 
+                    display: 'flex', 
+                    justifyContent: 'center', 
+                    alignItems: 'center', 
+                    height: '100vh',
+                    width: '100vw',
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    backgroundColor: 'rgba(255, 255, 255, 0.8)' // Semi-transparent background
+                }}
+            >
+                <CircularProgress size={60} /> {/* Increased size for better visibility */}
+            </Box>
+        );
+    }
+
+    if (error) {
+        return (
+            <Box 
+                sx={{ 
+                    display: 'flex', 
+                    justifyContent: 'center', 
+                    alignItems: 'center', 
+                    height: '100vh',
+                    width: '100vw',
+                    padding: 2,
+                    textAlign: 'center'
+                }}
+            >
+                <Typography color="error" variant="h6">
+                    Error loading technologies: {error.message}
+                </Typography>
+            </Box>
+        );
+    }
 
     return (
         <Box sx={{
@@ -247,7 +260,6 @@ const TechnologyRadar = () => {
                         <line x1="0" y1={svgSize.height / 2} x2={svgSize.width} y2={svgSize.height / 2} stroke="#ddd" strokeWidth="1" />
                         <line x1={svgSize.width / 2} y1="0" x2={svgSize.width / 2} y2={svgSize.height} stroke="#ddd" strokeWidth="1" />
 
-                        {/* Technologies */}
                         {technologiesWithPositions.map((tech) => {
                             const { x, y } = tech.position;
                             return (

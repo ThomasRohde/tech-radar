@@ -1,11 +1,14 @@
 import React from 'react'
+import { TechnologiesProvider } from './components/DataManager'
 import Radar from './components/Radar'
 
 function App() {
   return (
-    <div className="App">
-      <Radar />
-    </div>
+    <TechnologiesProvider>
+      <div className="App">
+        <Radar />
+      </div>
+    </TechnologiesProvider>
   )
 }
 
