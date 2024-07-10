@@ -56,7 +56,7 @@ const TechnologyRadar = () => {
     const updateSize = () => {
         if (containerRef.current) {
             const { width, height } = containerRef.current.getBoundingClientRect();
-            const size = Math.min(width, height);
+            const size = Math.min(width, height) * 0.9; // Use 90% of the available space
             setSvgSize({ width: size, height: size });
         }
     };
@@ -180,9 +180,6 @@ const TechnologyRadar = () => {
             background: "#F2F1F1",
             overflow: 'hidden'
         }}>
-            <Typography variant="h4" component="h2" align="center" sx={{ py: 2 }}>
-                Technology Radar
-            </Typography>
             <Box sx={{
                 flexGrow: 1,
                 display: 'flex',
@@ -192,17 +189,23 @@ const TechnologyRadar = () => {
                 p: 2,
                 maxWidth: '1600px',
                 margin: '0 auto',
-                width: '100%'
+                width: '100%',
+                height: '100%'
             }}>
                 <Box ref={containerRef} sx={{
                     flex: 1,
                     display: 'flex',
+                    flexDirection: 'column',
                     justifyContent: 'center',
                     alignItems: 'center',
                     position: 'relative',
                     maxWidth: isSmallScreen ? '100%' : 'calc(100% - 300px)',
-                    height: '100%'
+                    height: '100%',
+                    overflow: 'hidden'
                 }}>
+                    <Typography variant="h4" component="h2" align="center" sx={{ mb: 2 }}>
+                        Technology Radar
+                    </Typography>
                     <Box
                         ref={radarRef}
                         component="svg"
@@ -273,7 +276,7 @@ const TechnologyRadar = () => {
                                     Platforms
                                 </QuadrantLabel>
                                 <QuadrantLabel x={svgSize.width - 10} y={svgSize.height - 20} textAnchor="end" onClick={() => handleQuadrantClick("Languages & Frameworks")}>
-                                    Languages & Frameworks
+                                    Languages <br/>& Frameworks
                                 </QuadrantLabel>
                             </>
                         )}
@@ -284,7 +287,9 @@ const TechnologyRadar = () => {
                     width: isSmallScreen ? '100%' : '300px',
                     mt: isSmallScreen ? 2 : 0,
                     ml: isSmallScreen ? 0 : 2,
-                    flexShrink: 0
+                    flexShrink: 0,
+                    overflowY: 'auto',
+                    maxHeight: isSmallScreen ? '30vh' : '100%'
                 }}>
                     {/* Legend */}
                     <Paper sx={{ p: 2 }}>
