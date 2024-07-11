@@ -26,6 +26,8 @@
     - assets/
       - react.svg
     - components/
+      - AdminPage.jsx
+      - BurgerMenu.jsx
       - DataManager.jsx
       - Radar.jsx
 

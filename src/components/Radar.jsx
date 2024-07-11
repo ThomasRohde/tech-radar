@@ -13,7 +13,13 @@ import {
 import React, { useEffect, useRef, useState } from "react";
 import { useTechnologies } from './DataManager';
 
-const QUADRANTS = ["Techniques", "Tools", "Platforms", "Languages & Frameworks"];
+const QUADRANTS = [
+    { id: 0, name: "Techniques" },
+    { id: 1, name: "Tools" },
+    { id: 2, name: "Platforms" },
+    { id: 3, name: "Languages & Frameworks" }
+];
+
 const RINGS = ["Adopt", "Trial", "Assess", "Hold"];
 
 const TechnologyRadar = () => {
@@ -53,23 +59,23 @@ const TechnologyRadar = () => {
         };
     }, []);
 
-    const getQuadrantAngles = (quadrant) => {
-        switch (quadrant) {
-            case "Techniques": return { start: -Math.PI / 4, end: Math.PI / 4 };
-            case "Tools": return { start: Math.PI / 4, end: 3 * Math.PI / 4 };
-            case "Platforms": return { start: 3 * Math.PI / 4, end: 5 * Math.PI / 4 };
-            case "Languages & Frameworks": return { start: 5 * Math.PI / 4, end: 7 * Math.PI / 4 };
+    const getQuadrantAngles = (quadrantId) => {
+        switch (quadrantId) {
+            case 0: return { start: -Math.PI / 4, end: Math.PI / 4 };
+            case 1: return { start: Math.PI / 4, end: 3 * Math.PI / 4 };
+            case 2: return { start: 3 * Math.PI / 4, end: 5 * Math.PI / 4 };
+            case 3: return { start: 5 * Math.PI / 4, end: 7 * Math.PI / 4 };
             default: return { start: 0, end: 2 * Math.PI };
         }
     };
 
     const getRingRadius = (ring) => {
         const index = RINGS.indexOf(ring);
-        return (index + 1) * 100; // Full radius for each ring
+        return (index + 1) * 100;
     };
 
-    const calculatePosition = (tech, quadrant) => {
-        const { start, end } = getQuadrantAngles(quadrant);
+    const calculatePosition = (tech) => {
+        const { start, end } = getQuadrantAngles(tech.quadrantId);
         const angle = start + Math.random() * (end - start);
         const maxRadius = Math.min(svgSize.width, svgSize.height) / 2;
         const radius = (getRingRadius(tech.ring) / 400) * maxRadius - Math.random() * (maxRadius / 4);
@@ -80,19 +86,15 @@ const TechnologyRadar = () => {
 
     const technologiesWithPositions = React.useMemo(() => {
         if (!technologies) return [];
-        return Object.entries(technologies).flatMap(([quadrantKey, techs]) => {
-            const quadrant = quadrantKey.replace("_", " & ");
-            return techs.map(tech => ({
-                ...tech,
-                quadrant,
-                position: calculatePosition(tech, quadrant)
-            }));
-        });
+        return Object.values(technologies).flat().map(tech => ({
+            ...tech,
+            position: calculatePosition(tech)
+        }));
     }, [svgSize, technologies]);
 
-    const getColor = (quadrant) => {
+    const getColor = (quadrantId) => {
         const colors = ["#86B782", "#1EBB9B", "#F38A3E", "#B32059"];
-        return colors[QUADRANTS.indexOf(quadrant)];
+        return colors[quadrantId];
     };
 
     const getStatusFill = (status) => {
@@ -122,10 +124,9 @@ const TechnologyRadar = () => {
         }
     }, []);
 
-    const handleQuadrantClick = (quadrant) => {
-        console.log(`Clicked on ${quadrant}`);
+    const handleQuadrantClick = (quadrantId) => {
+        console.log(`Clicked on ${QUADRANTS[quadrantId].name}`);
     };
-
     const QuadrantLabel = ({ x, y, textAnchor, children, onClick, multiline }) => {
         const [firstLine, secondLine] = multiline ? children.split('&') : [children];
         return (
@@ -155,11 +156,11 @@ const TechnologyRadar = () => {
 
     if (loading) {
         return (
-            <Box 
-                sx={{ 
-                    display: 'flex', 
-                    justifyContent: 'center', 
-                    alignItems: 'center', 
+            <Box
+                sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
                     height: '100vh',
                     width: '100vw',
                     position: 'fixed',
@@ -175,11 +176,11 @@ const TechnologyRadar = () => {
 
     if (error) {
         return (
-            <Box 
-                sx={{ 
-                    display: 'flex', 
-                    justifyContent: 'center', 
-                    alignItems: 'center', 
+            <Box
+                sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
                     height: '100vh',
                     width: '100vw',
                     padding: 2,
@@ -252,25 +253,13 @@ const TechnologyRadar = () => {
                                 r={(4 - index) * (Math.min(svgSize.width, svgSize.height) / 8)}
                                 fill="none"
                                 stroke="#ddd"
-                                strokeWidth="1"
+                                strokeWidth="2"
                             />
                         ))}
 
                         {/* Quadrant lines */}
-                        <line x1="0" y1={svgSize.height / 2} x2={svgSize.width} y2={svgSize.height / 2} stroke="#ddd" strokeWidth="1" />
-                        <line x1={svgSize.width / 2} y1="0" x2={svgSize.width / 2} y2={svgSize.height} stroke="#ddd" strokeWidth="1" />
-
-                        {technologiesWithPositions.map((tech) => {
-                            const { x, y } = tech.position;
-                            return (
-                                <g key={tech.id} onMouseEnter={() => setHoveredTech(tech)} onMouseLeave={() => setHoveredTech(null)}>
-                                    <circle cx={x} cy={y} r={Math.min(svgSize.width, svgSize.height) / 50} fill={getColor(tech.quadrant)} stroke="white" strokeWidth="2" />
-                                    <circle cx={x} cy={y} r={Math.min(svgSize.width, svgSize.height) / 70} fill={getStatusFill(tech.status)} />
-                                    <text x={x} y={y} textAnchor="middle" dominantBaseline="central" fill="white" fontSize={Math.min(svgSize.width, svgSize.height) / 80}>{tech.id}</text>
-                                </g>
-                            );
-                        })}
-
+                        <line x1="0" y1={svgSize.height / 2} x2={svgSize.width} y2={svgSize.height / 2} stroke="#ddd" strokeWidth="2" />
+                        <line x1={svgSize.width / 2} y1="0" x2={svgSize.width / 2} y2={svgSize.height} stroke="#ddd" strokeWidth="2" />
                         {/* Ring labels */}
                         {!isExtraSmallScreen && RINGS.map((ring, index) => (
                             <text
@@ -284,30 +273,29 @@ const TechnologyRadar = () => {
                                 {ring}
                             </text>
                         ))}
-
                         {/* Quadrant labels */}
-                        {!isExtraSmallScreen && (
-                            <>
-                                <QuadrantLabel x="10" y="30" textAnchor="start" onClick={() => handleQuadrantClick("Techniques")}>
-                                    Techniques
-                                </QuadrantLabel>
-                                <QuadrantLabel x={svgSize.width - 10} y="30" textAnchor="end" onClick={() => handleQuadrantClick("Tools")}>
-                                    Tools
-                                </QuadrantLabel>
-                                <QuadrantLabel x="10" y={svgSize.height - 20} textAnchor="start" onClick={() => handleQuadrantClick("Platforms")}>
-                                    Platforms
-                                </QuadrantLabel>
-                                <QuadrantLabel
-                                    x={svgSize.width - 10}
-                                    y={svgSize.height - 45}
-                                    textAnchor="end"
-                                    onClick={() => handleQuadrantClick("Languages & Frameworks")}
-                                    multiline={true}
-                                >
-                                    Languages & Frameworks
-                                </QuadrantLabel>
-                            </>
-                        )}
+                        {!isExtraSmallScreen && QUADRANTS.map((quadrant) => (
+                            <QuadrantLabel
+                                key={quadrant.id}
+                                x={quadrant.id % 2 === 0 ? "10" : svgSize.width - 10}
+                                y={quadrant.id < 2 ? "30" : svgSize.height - (quadrant.id === 3 ? 45 : 20)}
+                                textAnchor={quadrant.id % 2 === 0 ? "start" : "end"}
+                                onClick={() => handleQuadrantClick(quadrant.id)}
+                                multiline={quadrant.id === 3}
+                            >
+                                {quadrant.name}
+                            </QuadrantLabel>
+                        ))}
+                        {technologiesWithPositions.map((tech) => {
+                            const { x, y } = tech.position;
+                            return (
+                                <g key={tech.id} onMouseEnter={() => setHoveredTech(tech)} onMouseLeave={() => setHoveredTech(null)}>
+                                    <circle cx={x} cy={y} r={Math.min(svgSize.width, svgSize.height) / 50} fill={getColor(tech.quadrantId)} stroke="white" strokeWidth="2" />
+                                    <circle cx={x} cy={y} r={Math.min(svgSize.width, svgSize.height) / 70} fill={getStatusFill(tech.status)} />
+                                    <text x={x} y={y} textAnchor="middle" dominantBaseline="central" fill="white" fontSize={Math.min(svgSize.width, svgSize.height) / 80}>{tech.id}</text>
+                                </g>
+                            );
+                        })}
                     </Box>
                 </Box>
 
@@ -353,7 +341,7 @@ const TechnologyRadar = () => {
                     }}
                 >
                     <Typography variant="h6" gutterBottom>{hoveredTech.name}</Typography>
-                    <Typography variant="body2"><strong>Quadrant:</strong> {hoveredTech.quadrant}</Typography>
+                    <Typography variant="body2"><strong>Quadrant:</strong> {QUADRANTS[hoveredTech.quadrantId].name.replace('_', ' & ')}</Typography>
                     <Typography variant="body2"><strong>Ring:</strong> {hoveredTech.ring}</Typography>
                     <Typography variant="body2"><strong>Status:</strong> {hoveredTech.status}</Typography>
                     <Typography variant="body2"><strong>Description:</strong> {hoveredTech.description}</Typography>
