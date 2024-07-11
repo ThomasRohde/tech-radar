@@ -60,10 +60,10 @@ const TechnologyRadar = () => {
         };
     }, []);
 
-    const technologiesWithPositions = useMemo(() => 
+    const technologiesWithPositions = useMemo(() =>
         calculateTechnologiesWithPositions(technologies, svgSize, RINGS),
-    [svgSize, technologies]);
-    
+        [svgSize, technologies]);
+
     const getColor = (quadrantId) => {
         const colors = ["#86B782", "#1EBB9B", "#F38A3E", "#B32059"];
         return colors[quadrantId];
