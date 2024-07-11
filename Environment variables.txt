@@ -1,0 +1,13 @@
+.env.development file:
+
+VITE_APP_DATA_SOURCE=local
+VITE_ADMIN_USERNAME=admin
+VITE_ADMIN_PASSWORD=devpassword
+VITE_DATA_SOURCE=local
+
+.env.production file:
+
+VITE_APP_DATA_SOURCE=local
+VITE_ADMIN_USERNAME=admin
+VITE_ADMIN_PASSWORD=prodpassword
+VITE_DATA_SOURCE=firestore
