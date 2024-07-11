@@ -15,10 +15,10 @@ import { calculateTechnologiesWithPositions } from '../utils/radarCalculations';
 import { useTechnologies } from './DataManager';
 
 const QUADRANTS = [
-    { id: 0, name: "Techniques" },
-    { id: 1, name: "Tools" },
-    { id: 2, name: "Platforms" },
-    { id: 3, name: "Languages & Frameworks" }
+    { id: 0, name: "Tools", visualOrder: 1 },
+    { id: 1, name: "Techniques", visualOrder: 0 },
+    { id: 2, name: "Platforms", visualOrder: 2 },
+    { id: 3, name: "Languages & Frameworks", visualOrder: 3 }
 ];
 
 const RINGS = ["Adopt", "Trial", "Assess", "Hold"];
@@ -247,14 +247,14 @@ const TechnologyRadar = () => {
                             </text>
                         ))}
                         {/* Quadrant labels */}
-                        {!isExtraSmallScreen && QUADRANTS.map((quadrant) => (
+                        {!isExtraSmallScreen && QUADRANTS.sort((a, b) => a.visualOrder - b.visualOrder).map((quadrant) => (
                             <QuadrantLabel
                                 key={quadrant.id}
-                                x={quadrant.id % 2 === 0 ? "10" : svgSize.width - 10}
-                                y={quadrant.id < 2 ? "30" : svgSize.height - (quadrant.id === 3 ? 45 : 20)}
-                                textAnchor={quadrant.id % 2 === 0 ? "start" : "end"}
+                                x={quadrant.visualOrder % 2 === 0 ? "10" : svgSize.width - 10}
+                                y={quadrant.visualOrder < 2 ? "30" : svgSize.height - (quadrant.name === "Languages & Frameworks" ? 45 : 20)}
+                                textAnchor={quadrant.visualOrder % 2 === 0 ? "start" : "end"}
                                 onClick={() => handleQuadrantClick(quadrant.id)}
-                                multiline={quadrant.id === 3}
+                                multiline={quadrant.name === "Languages & Frameworks"}
                             >
                                 {quadrant.name}
                             </QuadrantLabel>
@@ -314,7 +314,9 @@ const TechnologyRadar = () => {
                     }}
                 >
                     <Typography variant="h6" gutterBottom>{hoveredTech.name}</Typography>
-                    <Typography variant="body2"><strong>Quadrant:</strong> {QUADRANTS[hoveredTech.quadrantId].name.replace('_', ' & ')}</Typography>
+                    <Typography variant="body2">
+                        <strong>Quadrant:</strong> {QUADRANTS.find(q => q.id === hoveredTech.quadrantId)?.name.replace('_', ' & ')}
+                    </Typography>
                     <Typography variant="body2"><strong>Ring:</strong> {hoveredTech.ring}</Typography>
                     <Typography variant="body2"><strong>Status:</strong> {hoveredTech.status}</Typography>
                     <Typography variant="body2"><strong>Description:</strong> {hoveredTech.description}</Typography>

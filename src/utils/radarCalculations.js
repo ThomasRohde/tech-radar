@@ -2,10 +2,10 @@
 
 const getQuadrantAngles = (quadrantId) => {
     switch (quadrantId) {
-        case 0: return { start: -Math.PI / 4, end: Math.PI / 4 };
-        case 1: return { start: Math.PI / 4, end: 3 * Math.PI / 4 };
-        case 2: return { start: 3 * Math.PI / 4, end: 5 * Math.PI / 4 };
-        case 3: return { start: 5 * Math.PI / 4, end: 7 * Math.PI / 4 };
+        case 0: return { start: 3 * Math.PI / 2, end: 2 * Math.PI }; // Tools
+        case 1: return { start: Math.PI, end: 3 * Math.PI / 2 }; // Techniques  
+        case 2: return { start: Math.PI / 2, end: Math.PI }; // Platforms        
+        case 3: return { start: 0, end: Math.PI / 2 }; // Languages & Frameworks
         default: return { start: 0, end: 2 * Math.PI };
     }
 };
@@ -27,7 +27,7 @@ export const calculatePosition = (tech, svgSize, rings) => {
 
 export const calculateTechnologiesWithPositions = (technologies, svgSize, rings) => {
     if (!technologies) return [];
-    return Object.values(technologies).flat().map(tech => ({
+    return technologies.map(tech => ({
         ...tech,
         position: calculatePosition(tech, svgSize, rings)
     }));
