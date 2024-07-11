@@ -87,7 +87,7 @@ const TechList = ({ onSelectTech, onCreateTech }) => {
     };
 
     return (
-        <Paper elevation={1} sx={{ width: '100%' }}>
+        <Paper elevation={1} sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
             <Box sx={{ p: 2 }}>
                 <Typography variant="h6" sx={{ mb: 2 }}>Technologies</Typography>
                 <Box sx={{
@@ -124,7 +124,7 @@ const TechList = ({ onSelectTech, onCreateTech }) => {
                 </Box>
                 <Divider />
             </Box>
-            <List>
+            <List sx={{ flexGrow: 1, overflow: 'auto', maxHeight: 'calc(100vh - 200px)' }}>
                 {filteredTechs.map((tech) => (
                     <ListItem
                         key={tech.id}
