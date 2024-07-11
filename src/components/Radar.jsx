@@ -10,7 +10,8 @@ import {
     useMediaQuery,
     useTheme
 } from "@mui/material";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { calculateTechnologiesWithPositions } from '../utils/radarCalculations';
 import { useTechnologies } from './DataManager';
 
 const QUADRANTS = [
@@ -59,39 +60,10 @@ const TechnologyRadar = () => {
         };
     }, []);
 
-    const getQuadrantAngles = (quadrantId) => {
-        switch (quadrantId) {
-            case 0: return { start: -Math.PI / 4, end: Math.PI / 4 };
-            case 1: return { start: Math.PI / 4, end: 3 * Math.PI / 4 };
-            case 2: return { start: 3 * Math.PI / 4, end: 5 * Math.PI / 4 };
-            case 3: return { start: 5 * Math.PI / 4, end: 7 * Math.PI / 4 };
-            default: return { start: 0, end: 2 * Math.PI };
-        }
-    };
-
-    const getRingRadius = (ring) => {
-        const index = RINGS.indexOf(ring);
-        return (index + 1) * 100;
-    };
-
-    const calculatePosition = (tech) => {
-        const { start, end } = getQuadrantAngles(tech.quadrantId);
-        const angle = start + Math.random() * (end - start);
-        const maxRadius = Math.min(svgSize.width, svgSize.height) / 2;
-        const radius = (getRingRadius(tech.ring) / 400) * maxRadius - Math.random() * (maxRadius / 4);
-        const x = svgSize.width / 2 + radius * Math.cos(angle);
-        const y = svgSize.height / 2 + radius * Math.sin(angle);
-        return { x, y };
-    };
-
-    const technologiesWithPositions = React.useMemo(() => {
-        if (!technologies) return [];
-        return Object.values(technologies).flat().map(tech => ({
-            ...tech,
-            position: calculatePosition(tech)
-        }));
-    }, [svgSize, technologies]);
-
+    const technologiesWithPositions = useMemo(() => 
+        calculateTechnologiesWithPositions(technologies, svgSize, RINGS),
+    [svgSize, technologies]);
+    
     const getColor = (quadrantId) => {
         const colors = ["#86B782", "#1EBB9B", "#F38A3E", "#B32059"];
         return colors[quadrantId];
@@ -127,6 +99,7 @@ const TechnologyRadar = () => {
     const handleQuadrantClick = (quadrantId) => {
         console.log(`Clicked on ${QUADRANTS[quadrantId].name}`);
     };
+
     const QuadrantLabel = ({ x, y, textAnchor, children, onClick, multiline }) => {
         const [firstLine, secondLine] = multiline ? children.split('&') : [children];
         return (

@@ -30,4 +30,6 @@
       - BurgerMenu.jsx
       - DataManager.jsx
       - Radar.jsx
+    - utils/
+      - radarCalculations.js
 
