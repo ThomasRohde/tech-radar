@@ -60,6 +60,21 @@ const BurgerMenu = ({ onNavigate }) => {
     { text: 'Admin', icon: <AdminIcon />, onClick: () => handleNavigation('admin') },
   ];
 
+  const textFieldSx = {
+    '& .MuiOutlinedInput-root': {
+      '&.Mui-focused fieldset': {
+        borderColor: 'rgba(0, 0, 0, 0)', // Use the default border color
+      },
+    },
+    '& .MuiInputLabel-root': {
+      backgroundColor: 'white',
+      padding: '0 4px',
+    },
+    '& .MuiInputLabel-root.Mui-focused': {
+      color: 'rgba(0, 0, 0, 0.6)', // Use the default label color
+    },
+  };
+
   return (
     <>
       <IconButton
@@ -109,11 +124,12 @@ const BurgerMenu = ({ onNavigate }) => {
         <DialogTitle>Admin Login</DialogTitle>
         <DialogContent>
           <Box component="form" onSubmit={(e) => { e.preventDefault(); handleLogin(); }} sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 2 }}>
-            <TextField
+          <TextField
               label="Username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               fullWidth
+              sx={textFieldSx}
             />
             <TextField
               label="Password"
@@ -121,6 +137,7 @@ const BurgerMenu = ({ onNavigate }) => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               fullWidth
+              sx={textFieldSx}
             />
             <Button type="submit" variant="contained">Login</Button>
           </Box>
