@@ -1,22 +1,29 @@
-import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
+import { Delete as DeleteIcon, Edit as EditIcon, Restore as RestoreIcon, Search as SearchIcon } from '@mui/icons-material';
 import {
     Box,
     Button,
     Divider,
+    FormControl,
     IconButton,
+    InputAdornment,
+    InputLabel,
     List,
     ListItem,
     ListItemText,
+    MenuItem,
     Paper,
+    Select,
+    TextField,
     Tooltip,
     Typography,
     useMediaQuery,
     useTheme
 } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useTechnologies } from './DataManager';
 
 const QUADRANTS = ["Tools", "Techniques", "Platforms", "Languages & Frameworks"];
+const RINGS = ["Adopt", "Trial", "Assess", "Hold"];
 
 const QuadrantPieSlice = ({ quadrantId }) => {
     const theme = useTheme();
@@ -73,17 +80,40 @@ const QuadrantPieSlice = ({ quadrantId }) => {
 };
 
 const TechList = ({ onSelectTech, onCreateTech }) => {
-    const { technologies, deleteTechnology } = useTechnologies();
+    const { getAllTechnologies, deleteTechnology, restoreTechnology } = useTechnologies();
     const [filter, setFilter] = useState('active');
+    const [searchTerm, setSearchTerm] = useState('');
+    const [ringFilter, setRingFilter] = useState('');
+    const [quadrantFilter, setQuadrantFilter] = useState('');
+    const [sponsorFilter, setSponsorFilter] = useState('');
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
-    const filteredTechs = technologies.filter(tech =>
-        filter === 'active' ? !tech.deleted : tech.deleted
-    );
+    const allTechnologies = getAllTechnologies();
+
+    const sponsors = useMemo(() => {
+        const uniqueSponsors = new Set(allTechnologies.map(tech => tech.sponsor));
+        return Array.from(uniqueSponsors).sort();
+    }, [allTechnologies]);
+
+    const filteredTechs = useMemo(() => {
+        return allTechnologies.filter(tech => {
+            const matchesDeletedFilter = filter === 'active' ? !tech.deleted : tech.deleted;
+            const matchesSearch = tech.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                tech.description.toLowerCase().includes(searchTerm.toLowerCase());
+            const matchesRing = ringFilter === '' || tech.ring === ringFilter;
+            const matchesQuadrant = quadrantFilter === '' || tech.quadrantId === parseInt(quadrantFilter);
+            const matchesSponsor = sponsorFilter === '' || tech.sponsor === sponsorFilter;
+            return matchesDeletedFilter && matchesSearch && matchesRing && matchesQuadrant && matchesSponsor;
+        });
+    }, [allTechnologies, filter, searchTerm, ringFilter, quadrantFilter, sponsorFilter]);
 
     const handleDelete = (tech) => {
         deleteTechnology(tech.id);
+    };
+
+    const handleRestore = (tech) => {
+        restoreTechnology(tech.id);
     };
 
     return (
@@ -92,35 +122,100 @@ const TechList = ({ onSelectTech, onCreateTech }) => {
                 <Typography variant="h6" sx={{ mb: 2 }}>Technologies</Typography>
                 <Box sx={{
                     display: 'flex',
-                    flexDirection: isSmallScreen ? 'column' : 'row',
+                    flexDirection: 'column',
                     gap: 1,
                     mb: 2
                 }}>
-                    <Button
-                        variant={filter === 'active' ? 'contained' : 'outlined'}
-                        onClick={() => setFilter('active')}
+                    <Box sx={{
+                        display: 'flex',
+                        flexDirection: isSmallScreen ? 'column' : 'row',
+                        gap: 1,
+                    }}>
+                        <Button
+                            variant={filter === 'active' ? 'contained' : 'outlined'}
+                            onClick={() => setFilter('active')}
+                            size="small"
+                            fullWidth={isSmallScreen}
+                        >
+                            ACTIVE
+                        </Button>
+                        <Button
+                            variant={filter === 'deleted' ? 'contained' : 'outlined'}
+                            onClick={() => setFilter('deleted')}
+                            size="small"
+                            fullWidth={isSmallScreen}
+                        >
+                            DELETED
+                        </Button>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={onCreateTech}
+                            size="small"
+                            fullWidth={isSmallScreen}
+                        >
+                            ADD NEW TECH
+                        </Button>
+                    </Box>
+                    <TextField
+                        fullWidth
                         size="small"
-                        fullWidth={isSmallScreen}
-                    >
-                        ACTIVE
-                    </Button>
-                    <Button
-                        variant={filter === 'deleted' ? 'contained' : 'outlined'}
-                        onClick={() => setFilter('deleted')}
-                        size="small"
-                        fullWidth={isSmallScreen}
-                    >
-                        DELETED
-                    </Button>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={onCreateTech}
-                        size="small"
-                        fullWidth={isSmallScreen}
-                    >
-                        ADD NEW TECH
-                    </Button>
+                        placeholder="Search technologies..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        InputProps={{
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <SearchIcon />
+                                </InputAdornment>
+                            ),
+                        }}
+                    />
+                    <Box sx={{
+                        display: 'flex',
+                        flexDirection: isSmallScreen ? 'column' : 'row',
+                        gap: 1,
+                    }}>
+                        <FormControl fullWidth size="small">
+                            <InputLabel>Ring</InputLabel>
+                            <Select
+                                value={ringFilter}
+                                onChange={(e) => setRingFilter(e.target.value)}
+                                label="Ring"
+                            >
+                                <MenuItem value="">All</MenuItem>
+                                {RINGS.map((ring) => (
+                                    <MenuItem key={ring} value={ring}>{ring}</MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                        <FormControl fullWidth size="small">
+                            <InputLabel>Quadrant</InputLabel>
+                            <Select
+                                value={quadrantFilter}
+                                onChange={(e) => setQuadrantFilter(e.target.value)}
+                                label="Quadrant"
+                            >
+                                <MenuItem value="">All</MenuItem>
+                                {QUADRANTS.map((quadrant, index) => (
+                                    <MenuItem key={index} value={index}>{quadrant}</MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                        <FormControl fullWidth size="small">
+                            <InputLabel>Sponsor</InputLabel>
+                            <Select
+                                value={sponsorFilter}
+                                onChange={(e) => setSponsorFilter(e.target.value)}
+                                label="Sponsor"
+                            >
+                                <MenuItem value="">All</MenuItem>
+                                {sponsors.map((sponsor) => (
+                                    <MenuItem key={sponsor} value={sponsor}>{sponsor}</MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </Box>
                 </Box>
                 <Divider />
             </Box>
@@ -133,9 +228,15 @@ const TechList = ({ onSelectTech, onCreateTech }) => {
                                 <IconButton size="small" edge="end" aria-label="edit" onClick={() => onSelectTech(tech)}>
                                     <EditIcon fontSize="small" />
                                 </IconButton>
-                                <IconButton size="small" edge="end" aria-label="delete" onClick={() => handleDelete(tech)}>
-                                    <DeleteIcon fontSize="small" />
-                                </IconButton>
+                                {tech.deleted ? (
+                                    <IconButton size="small" edge="end" aria-label="restore" onClick={() => handleRestore(tech)}>
+                                        <RestoreIcon fontSize="small" />
+                                    </IconButton>
+                                ) : (
+                                    <IconButton size="small" edge="end" aria-label="delete" onClick={() => handleDelete(tech)}>
+                                        <DeleteIcon fontSize="small" />
+                                    </IconButton>
+                                )}
                             </Box>
                         }
                     >
@@ -150,7 +251,7 @@ const TechList = ({ onSelectTech, onCreateTech }) => {
                             }
                             secondary={
                                 <Typography variant="body2" color="text.secondary">
-                                    Ring: {tech.ring}
+                                    Ring: {tech.ring} | Quadrant: {QUADRANTS[tech.quadrantId]} | Sponsor: {tech.sponsor}
                                 </Typography>
                             }
                         />

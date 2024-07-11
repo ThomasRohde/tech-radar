@@ -124,7 +124,7 @@ const BurgerMenu = ({ onNavigate }) => {
         <DialogTitle>Admin Login</DialogTitle>
         <DialogContent>
           <Box component="form" onSubmit={(e) => { e.preventDefault(); handleLogin(); }} sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 2 }}>
-          <TextField
+            <TextField
               label="Username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}

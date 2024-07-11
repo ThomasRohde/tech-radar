@@ -116,6 +116,16 @@ export const TechnologiesProvider = ({ children }) => {
         return technologies ? technologies.filter(tech => !tech.deleted) : [];
     };
 
+    const getAllTechnologies = () => {
+        return technologies ? technologies : [];
+    };
+
+    const restoreTechnology = (id) => {
+        setTechnologies(prevTechs =>
+            prevTechs.map(tech => tech.id === id ? { ...tech, deleted: false } : tech)
+        );
+    };
+
     return (
         <TechnologiesContext.Provider value={{
             technologies: getActiveTechnologies(),
@@ -124,7 +134,9 @@ export const TechnologiesProvider = ({ children }) => {
             addTechnology,
             updateTechnology,
             deleteTechnology,
-            getTechnology
+            restoreTechnology,
+            getTechnology,
+            getAllTechnologies
         }}>
             {children}
         </TechnologiesContext.Provider>
