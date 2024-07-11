@@ -6,12 +6,17 @@ import {
 } from '@mui/icons-material';
 import {
   Box,
+  Button,
+  Dialog,
+  DialogContent,
+  DialogTitle,
   Drawer,
   IconButton,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
+  TextField,
   useMediaQuery,
   useTheme
 } from '@mui/material';
@@ -19,6 +24,9 @@ import React, { useState } from 'react';
 
 const BurgerMenu = ({ onNavigate }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -30,8 +38,21 @@ const BurgerMenu = ({ onNavigate }) => {
   };
 
   const handleNavigation = (page) => {
-    onNavigate(page);
+    if (page === 'admin') {
+      setIsLoginOpen(true);
+    } else {
+      onNavigate(page);
+    }
     setIsOpen(false);
+  };
+
+  const handleLogin = () => {
+    if (username === import.meta.env.VITE_ADMIN_USERNAME && password === import.meta.env.VITE_ADMIN_PASSWORD) {
+      setIsLoginOpen(false);
+      onNavigate('admin');
+    } else {
+      alert('Invalid credentials');
+    }
   };
 
   const menuItems = [
@@ -84,6 +105,27 @@ const BurgerMenu = ({ onNavigate }) => {
           </List>
         </Box>
       </Drawer>
+      <Dialog open={isLoginOpen} onClose={() => setIsLoginOpen(false)}>
+        <DialogTitle>Admin Login</DialogTitle>
+        <DialogContent>
+          <Box component="form" onSubmit={(e) => { e.preventDefault(); handleLogin(); }} sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 2 }}>
+            <TextField
+              label="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              fullWidth
+            />
+            <TextField
+              label="Password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              fullWidth
+            />
+            <Button type="submit" variant="contained">Login</Button>
+          </Box>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };

@@ -30,10 +30,10 @@ const AdminPage = () => {
           Welcome to the admin page. Here you can manage your technology radar data.
         </Typography>
       </Box>
-      
+
       <TechList onSelectTech={handleSelectTech} onCreateTech={handleCreateTech} />
 
-      <Dialog open={isDialogOpen} onClose={handleCloseDialog}>
+      <Dialog open={isDialogOpen} onClose={handleCloseDialog} fullWidth maxWidth="sm">
         <TechDetails tech={selectedTech} onClose={handleCloseDialog} />
       </Dialog>
     </Container>

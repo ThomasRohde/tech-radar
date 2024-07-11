@@ -1,12 +1,17 @@
 import {
     Box,
     Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
     FormControl,
     InputLabel,
     MenuItem,
     Select,
     TextField,
-    Typography
+    useMediaQuery,
+    useTheme
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useTechnologies } from './DataManager';
@@ -17,6 +22,8 @@ const STATUSES = ["New", "Moved in/out", "No change"];
 
 const TechDetails = ({ tech, onClose }) => {
   const { addTechnology, updateTechnology } = useTechnologies();
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   const [formData, setFormData] = useState({
     name: '',
     ring: '',
@@ -52,100 +59,112 @@ const TechDetails = ({ tech, onClose }) => {
   };
 
   return (
-    <Box component="form" onSubmit={handleSubmit} sx={{ maxWidth: 400, margin: 'auto' }}>
-      <Typography variant="h6" gutterBottom>
-        {tech ? 'Edit Technology' : 'Add New Technology'}
-      </Typography>
-      <TextField
-        fullWidth
-        margin="normal"
-        name="name"
-        label="Name"
-        value={formData.name}
-        onChange={handleChange}
-        required
-      />
-      <FormControl fullWidth margin="normal">
-        <InputLabel>Ring</InputLabel>
-        <Select
-          name="ring"
-          value={formData.ring}
-          onChange={handleChange}
-          required
-        >
-          {RINGS.map(ring => (
-            <MenuItem key={ring} value={ring}>{ring}</MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      <FormControl fullWidth margin="normal">
-        <InputLabel>Quadrant</InputLabel>
-        <Select
-          name="quadrantId"
-          value={formData.quadrantId}
-          onChange={handleChange}
-          required
-        >
-          {QUADRANTS.map((quadrant, index) => (
-            <MenuItem key={index} value={index}>{quadrant}</MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      <FormControl fullWidth margin="normal">
-        <InputLabel>Status</InputLabel>
-        <Select
-          name="status"
-          value={formData.status}
-          onChange={handleChange}
-          required
-        >
-          {STATUSES.map(status => (
-            <MenuItem key={status} value={status}>{status}</MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      <TextField
-        fullWidth
-        margin="normal"
-        name="description"
-        label="Description"
-        multiline
-        rows={4}
-        value={formData.description}
-        onChange={handleChange}
-        required
-      />
-      <TextField
-        fullWidth
-        margin="normal"
-        name="sponsor"
-        label="Sponsor"
-        value={formData.sponsor}
-        onChange={handleChange}
-        required
-      />
-      <TextField
-        fullWidth
-        margin="normal"
-        name="date"
-        label="Date"
-        type="date"
-        value={formData.date}
-        onChange={handleChange}
-        InputLabelProps={{
-          shrink: true,
-        }}
-        required
-      />
-      <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-between' }}>
-        <Button variant="contained" color="primary" type="submit">
+    <Dialog 
+      open={true} 
+      onClose={onClose}
+      fullScreen={fullScreen}
+      fullWidth
+      maxWidth="sm"
+    >
+      <DialogTitle>{tech ? 'Edit Technology' : 'Add New Technology'}</DialogTitle>
+      <DialogContent>
+        <Box component="form" onSubmit={handleSubmit} sx={{ pt: 2 }}>
+          <TextField
+            fullWidth
+            margin="normal"
+            name="name"
+            label="Name"
+            value={formData.name}
+            onChange={handleChange}
+            required
+          />
+          <FormControl fullWidth margin="normal" variant="outlined">
+            <InputLabel id="ring-label">Ring</InputLabel>
+            <Select
+              labelId="ring-label"
+              name="ring"
+              value={formData.ring}
+              onChange={handleChange}
+              label="Ring"
+              required
+            >
+              {RINGS.map(ring => (
+                <MenuItem key={ring} value={ring}>{ring}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl fullWidth margin="normal" variant="outlined">
+            <InputLabel id="quadrant-label">Quadrant</InputLabel>
+            <Select
+              labelId="quadrant-label"
+              name="quadrantId"
+              value={formData.quadrantId}
+              onChange={handleChange}
+              label="Quadrant"
+              required
+            >
+              {QUADRANTS.map((quadrant, index) => (
+                <MenuItem key={index} value={index}>{quadrant}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl fullWidth margin="normal" variant="outlined">
+            <InputLabel id="status-label">Status</InputLabel>
+            <Select
+              labelId="status-label"
+              name="status"
+              value={formData.status}
+              onChange={handleChange}
+              label="Status"
+              required
+            >
+              {STATUSES.map(status => (
+                <MenuItem key={status} value={status}>{status}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <TextField
+            fullWidth
+            margin="normal"
+            name="description"
+            label="Description"
+            multiline
+            rows={4}
+            value={formData.description}
+            onChange={handleChange}
+            required
+          />
+          <TextField
+            fullWidth
+            margin="normal"
+            name="sponsor"
+            label="Sponsor"
+            value={formData.sponsor}
+            onChange={handleChange}
+            required
+          />
+          <TextField
+            fullWidth
+            margin="normal"
+            name="date"
+            label="Date"
+            type="date"
+            value={formData.date}
+            onChange={handleChange}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            required
+          />
+        </Box>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={handleSubmit} variant="contained" color="primary">
           {tech ? 'Update' : 'Add'}
         </Button>
-        <Button variant="outlined" onClick={onClose}>
-          Cancel
-        </Button>
-      </Box>
-    </Box>
+      </DialogActions>
+    </Dialog>
   );
 };
 
