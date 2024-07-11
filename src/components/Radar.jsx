@@ -101,9 +101,35 @@ const TechnologyRadar = () => {
     };
 
     const QuadrantLabel = ({ quadrantIndex, children, onClick }) => {
-        const x = quadrantIndex % 2 === 0 ? 10 : svgSize.width - 10;
-        const y = quadrantIndex < 2 ? 30 : svgSize.height - (children === "Languages & Frameworks" ? 45 : 20);
-        const textAnchor = quadrantIndex % 2 === 0 ? "start" : "end";
+        let x, y, textAnchor;
+
+        switch (quadrantIndex) {
+            case 0: // Tools
+                x = svgSize.width - 10;
+                y = 30;
+                textAnchor = "end";
+                break;
+            case 1: // Techniques
+                x = 10;
+                y = 30;
+                textAnchor = "start";
+                break;
+            case 2: // Platforms
+                x = 10;
+                y = svgSize.height - 20;
+                textAnchor = "start";
+                break;
+            case 3: // Languages & Frameworks
+                x = svgSize.width - 10;
+                y = svgSize.height - 45;
+                textAnchor = "end";
+                break;
+            default:
+                x = 0;
+                y = 0;
+                textAnchor = "start";
+        }
+
         const multiline = children === "Languages & Frameworks";
         const [firstLine, secondLine] = multiline ? children.split(' & ') : [children];
 
@@ -128,7 +154,6 @@ const TechnologyRadar = () => {
             </g>
         );
     };
-
     if (loading) {
         return (
             <Box sx={{
