@@ -15,10 +15,10 @@ import { calculateTechnologiesWithPositions } from '../utils/radarCalculations';
 import { useTechnologies } from './DataManager';
 
 const QUADRANTS = [
-    { id: 0, name: "Tools", visualOrder: 1 },
-    { id: 1, name: "Techniques", visualOrder: 0 },
-    { id: 2, name: "Platforms", visualOrder: 2 },
-    { id: 3, name: "Languages & Frameworks", visualOrder: 3 }
+    "Tools",
+    "Techniques",
+    "Platforms",
+    "Languages & Frameworks"
 ];
 
 const RINGS = ["Adopt", "Trial", "Assess", "Hold"];
@@ -64,9 +64,9 @@ const TechnologyRadar = () => {
         calculateTechnologiesWithPositions(technologies, svgSize, RINGS),
         [svgSize, technologies]);
 
-    const getColor = (quadrantId) => {
+    const getColor = (quadrantIndex) => {
         const colors = ["#86B782", "#1EBB9B", "#F38A3E", "#B32059"];
-        return colors[quadrantId];
+        return colors[quadrantIndex];
     };
 
     const getStatusFill = (status) => {
@@ -96,17 +96,19 @@ const TechnologyRadar = () => {
         }
     }, []);
 
-    const handleQuadrantClick = (quadrantId) => {
-        console.log(`Clicked on ${QUADRANTS[quadrantId].name}`);
+    const handleQuadrantClick = (quadrantIndex) => {
+        console.log(`Clicked on ${QUADRANTS[quadrantIndex]}`);
     };
 
-    const QuadrantLabel = ({ x, y, textAnchor, children, onClick, multiline }) => {
-        const [firstLine, secondLine] = multiline ? children.split('&') : [children];
+    const QuadrantLabel = ({ quadrantIndex, children, onClick }) => {
+        const x = quadrantIndex % 2 === 0 ? 10 : svgSize.width - 10;
+        const y = quadrantIndex < 2 ? 30 : svgSize.height - (children === "Languages & Frameworks" ? 45 : 20);
+        const textAnchor = quadrantIndex % 2 === 0 ? "start" : "end";
+        const multiline = children === "Languages & Frameworks";
+        const [firstLine, secondLine] = multiline ? children.split(' & ') : [children];
+
         return (
-            <g
-                onClick={onClick}
-                style={{ cursor: 'pointer' }}
-            >
+            <g onClick={onClick} style={{ cursor: 'pointer' }}>
                 <text
                     x={x}
                     y={y}
@@ -129,37 +131,33 @@ const TechnologyRadar = () => {
 
     if (loading) {
         return (
-            <Box
-                sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    height: '100vh',
-                    width: '100vw',
-                    position: 'fixed',
-                    top: 0,
-                    left: 0,
-                    backgroundColor: 'rgba(255, 255, 255, 0.8)' // Semi-transparent background
-                }}
-            >
-                <CircularProgress size={60} /> {/* Increased size for better visibility */}
+            <Box sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '100vh',
+                width: '100vw',
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                backgroundColor: 'rgba(255, 255, 255, 0.8)'
+            }}>
+                <CircularProgress size={60} />
             </Box>
         );
     }
 
     if (error) {
         return (
-            <Box
-                sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    height: '100vh',
-                    width: '100vw',
-                    padding: 2,
-                    textAlign: 'center'
-                }}
-            >
+            <Box sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '100vh',
+                width: '100vw',
+                padding: 2,
+                textAlign: 'center'
+            }}>
                 <Typography color="error" variant="h6">
                     Error loading technologies: {error.message}
                 </Typography>
@@ -211,13 +209,8 @@ const TechnologyRadar = () => {
                         viewBox={`0 0 ${svgSize.width} ${svgSize.height}`}
                         preserveAspectRatio="xMidYMid meet"
                     >
-                        {/* Background */}
                         <rect width={svgSize.width} height={svgSize.height} fill="#F2F1F1" />
-
-                        {/* Radar circle */}
                         <circle cx={svgSize.width / 2} cy={svgSize.height / 2} r={Math.min(svgSize.width, svgSize.height) / 2} fill="white" />
-
-                        {/* Rings */}
                         {RINGS.map((_, index) => (
                             <circle
                                 key={index}
@@ -229,11 +222,8 @@ const TechnologyRadar = () => {
                                 strokeWidth="2"
                             />
                         ))}
-
-                        {/* Quadrant lines */}
                         <line x1="0" y1={svgSize.height / 2} x2={svgSize.width} y2={svgSize.height / 2} stroke="#ddd" strokeWidth="2" />
                         <line x1={svgSize.width / 2} y1="0" x2={svgSize.width / 2} y2={svgSize.height} stroke="#ddd" strokeWidth="2" />
-                        {/* Ring labels */}
                         {!isExtraSmallScreen && RINGS.map((ring, index) => (
                             <text
                                 key={ring}
@@ -246,17 +236,13 @@ const TechnologyRadar = () => {
                                 {ring}
                             </text>
                         ))}
-                        {/* Quadrant labels */}
-                        {!isExtraSmallScreen && QUADRANTS.sort((a, b) => a.visualOrder - b.visualOrder).map((quadrant) => (
+                        {!isExtraSmallScreen && QUADRANTS.map((quadrantName, index) => (
                             <QuadrantLabel
-                                key={quadrant.id}
-                                x={quadrant.visualOrder % 2 === 0 ? "10" : svgSize.width - 10}
-                                y={quadrant.visualOrder < 2 ? "30" : svgSize.height - (quadrant.name === "Languages & Frameworks" ? 45 : 20)}
-                                textAnchor={quadrant.visualOrder % 2 === 0 ? "start" : "end"}
-                                onClick={() => handleQuadrantClick(quadrant.id)}
-                                multiline={quadrant.name === "Languages & Frameworks"}
+                                key={index}
+                                quadrantIndex={index}
+                                onClick={() => handleQuadrantClick(index)}
                             >
-                                {quadrant.name}
+                                {quadrantName}
                             </QuadrantLabel>
                         ))}
                         {technologiesWithPositions.map((tech) => {
@@ -280,7 +266,6 @@ const TechnologyRadar = () => {
                     overflowY: 'auto',
                     maxHeight: isSmallScreen ? '30vh' : '100%'
                 }}>
-                    {/* Legend */}
                     <Paper sx={{ p: 2 }}>
                         <Typography variant="h6" gutterBottom>Status Legend</Typography>
                         <List dense>
@@ -299,7 +284,6 @@ const TechnologyRadar = () => {
                 </Box>
             </Box>
 
-            {/* Tooltip */}
             {hoveredTech && (
                 <Paper
                     sx={{
@@ -315,7 +299,7 @@ const TechnologyRadar = () => {
                 >
                     <Typography variant="h6" gutterBottom>{hoveredTech.name}</Typography>
                     <Typography variant="body2">
-                        <strong>Quadrant:</strong> {QUADRANTS.find(q => q.id === hoveredTech.quadrantId)?.name.replace('_', ' & ')}
+                        <strong>Quadrant:</strong> {QUADRANTS[hoveredTech.quadrantId]}
                     </Typography>
                     <Typography variant="body2"><strong>Ring:</strong> {hoveredTech.ring}</Typography>
                     <Typography variant="body2"><strong>Status:</strong> {hoveredTech.status}</Typography>
