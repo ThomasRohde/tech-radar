@@ -192,8 +192,8 @@ const TechnologyRadar = () => {
 
     return (
         <Box sx={{
-            width: '100vw',
-            height: '100vh',
+            width: '100%',
+            height: '100%',
             display: 'flex',
             flexDirection: 'column',
             background: "#F2F1F1",
@@ -203,13 +203,9 @@ const TechnologyRadar = () => {
                 flexGrow: 1,
                 display: 'flex',
                 flexDirection: isSmallScreen ? 'column' : 'row',
-                justifyContent: 'center',
-                alignItems: 'center',
-                p: 2,
-                maxWidth: '1600px',
-                margin: '0 auto',
+                height: '100%',
                 width: '100%',
-                height: '100%'
+                overflow: 'hidden'
             }}>
                 <Box ref={containerRef} sx={{
                     flex: 1,
@@ -218,8 +214,8 @@ const TechnologyRadar = () => {
                     justifyContent: 'center',
                     alignItems: 'center',
                     position: 'relative',
-                    maxWidth: isSmallScreen ? '100%' : 'calc(100% - 300px)',
                     height: '100%',
+                    width: '100%',
                     overflow: 'hidden'
                 }}>
                     <Typography variant="h4" component="h2" sx={{ mb: 0 }}>
@@ -233,6 +229,7 @@ const TechnologyRadar = () => {
                         height={svgSize.height}
                         viewBox={`0 0 ${svgSize.width} ${svgSize.height}`}
                         preserveAspectRatio="xMidYMid meet"
+                        sx={{ maxWidth: '100%', maxHeight: '100%' }}
                     >
                         <rect width={svgSize.width} height={svgSize.height} fill="#F2F1F1" />
                         <circle cx={svgSize.width / 2} cy={svgSize.height / 2} r={Math.min(svgSize.width, svgSize.height) / 2} fill="white" />

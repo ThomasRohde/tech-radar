@@ -56,15 +56,16 @@ function App() {
       <CssBaseline />
       {globalStyles}
       <TechnologiesProvider>
-        <Box sx={{ display: 'flex' }}>
+        <Box sx={{ display: 'flex', height: '100vh', width: '100vw' }}>
           <BurgerMenu onNavigate={handleNavigation} />
           <Box
             component="main"
             sx={{
               flexGrow: 1,
-              p: 3,
-              width: { sm: `calc(100% - 48px)` },
-              ml: { sm: `48px` },
+              height: '100%',
+              width: '100%',
+              overflow: 'hidden',
+              position: 'relative',
             }}
           >
             {currentPage === 'home' && <Radar />}
