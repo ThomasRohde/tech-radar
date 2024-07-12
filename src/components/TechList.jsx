@@ -1,5 +1,8 @@
-import { Delete as DeleteIcon, Edit as EditIcon, Restore as RestoreIcon, Search as SearchIcon } from '@mui/icons-material';
+import { Delete as DeleteIcon, Edit as EditIcon, ExpandMore as ExpandMoreIcon, Restore as RestoreIcon, Search as SearchIcon } from '@mui/icons-material';
 import {
+    Accordion,
+    AccordionDetails,
+    AccordionSummary,
     Box,
     Button,
     Divider,
@@ -86,10 +89,13 @@ const TechList = ({ onSelectTech, onCreateTech }) => {
     const [ringFilter, setRingFilter] = useState('');
     const [quadrantFilter, setQuadrantFilter] = useState('');
     const [sponsorFilter, setSponsorFilter] = useState('');
+    const [expandedFilter, setExpandedFilter] = useState('');
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
     const allTechnologies = getAllTechnologies();
+
+    console.log('All technologies:', allTechnologies);
 
     const sponsors = useMemo(() => {
         const uniqueSponsors = new Set(allTechnologies.map(tech => tech.sponsor));
@@ -108,12 +114,18 @@ const TechList = ({ onSelectTech, onCreateTech }) => {
         });
     }, [allTechnologies, filter, searchTerm, ringFilter, quadrantFilter, sponsorFilter]);
 
+    console.log('Filtered technologies:', filteredTechs);
+
     const handleDelete = (tech) => {
         deleteTechnology(tech.id);
     };
 
     const handleRestore = (tech) => {
         restoreTechnology(tech.id);
+    };
+
+    const handleFilterChange = (panel) => (event, isExpanded) => {
+        setExpandedFilter(isExpanded ? panel : '');
     };
 
     return (
@@ -171,54 +183,66 @@ const TechList = ({ onSelectTech, onCreateTech }) => {
                             ),
                         }}
                     />
-                    <Box sx={{
-                        display: 'flex',
-                        flexDirection: isSmallScreen ? 'column' : 'row',
-                        gap: 1,
-                    }}>
-                        <FormControl fullWidth size="small">
-                            <InputLabel>Ring</InputLabel>
-                            <Select
-                                value={ringFilter}
-                                onChange={(e) => setRingFilter(e.target.value)}
-                                label="Ring"
-                            >
-                                <MenuItem value="">All</MenuItem>
-                                {RINGS.map((ring) => (
-                                    <MenuItem key={ring} value={ring}>{ring}</MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                        <FormControl fullWidth size="small">
-                            <InputLabel>Quadrant</InputLabel>
-                            <Select
-                                value={quadrantFilter}
-                                onChange={(e) => setQuadrantFilter(e.target.value)}
-                                label="Quadrant"
-                            >
-                                <MenuItem value="">All</MenuItem>
-                                {QUADRANTS.map((quadrant, index) => (
-                                    <MenuItem key={index} value={index}>{quadrant}</MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                        <FormControl fullWidth size="small">
-                            <InputLabel>Sponsor</InputLabel>
-                            <Select
-                                value={sponsorFilter}
-                                onChange={(e) => setSponsorFilter(e.target.value)}
-                                label="Sponsor"
-                            >
-                                <MenuItem value="">All</MenuItem>
-                                {sponsors.map((sponsor) => (
-                                    <MenuItem key={sponsor} value={sponsor}>{sponsor}</MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </Box>
+                    <Accordion expanded={expandedFilter === 'filters'} onChange={handleFilterChange('filters')}>
+                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                            <Typography>Filters</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <Box sx={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: 1,
+                            }}>
+                                <FormControl fullWidth size="small">
+                                    <InputLabel>Ring</InputLabel>
+                                    <Select
+                                        value={ringFilter}
+                                        onChange={(e) => setRingFilter(e.target.value)}
+                                        label="Ring"
+                                    >
+                                        <MenuItem value="">All</MenuItem>
+                                        {RINGS.map((ring) => (
+                                            <MenuItem key={ring} value={ring}>{ring}</MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                                <FormControl fullWidth size="small">
+                                    <InputLabel>Quadrant</InputLabel>
+                                    <Select
+                                        value={quadrantFilter}
+                                        onChange={(e) => setQuadrantFilter(e.target.value)}
+                                        label="Quadrant"
+                                    >
+                                        <MenuItem value="">All</MenuItem>
+                                        {QUADRANTS.map((quadrant, index) => (
+                                            <MenuItem key={index} value={index}>{quadrant}</MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                                <FormControl fullWidth size="small">
+                                    <InputLabel>Sponsor</InputLabel>
+                                    <Select
+                                        value={sponsorFilter}
+                                        onChange={(e) => setSponsorFilter(e.target.value)}
+                                        label="Sponsor"
+                                    >
+                                        <MenuItem value="">All</MenuItem>
+                                        {sponsors.map((sponsor) => (
+                                            <MenuItem key={sponsor} value={sponsor}>{sponsor}</MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            </Box>
+                        </AccordionDetails>
+                    </Accordion>
                 </Box>
                 <Divider />
             </Box>
+            {filteredTechs.length === 0 && (
+                <Typography variant="body1" sx={{ p: 2 }}>
+                    No technologies found. Try adjusting your filters.
+                </Typography>
+            )}
             <List sx={{ flexGrow: 1, overflow: 'auto', maxHeight: 'calc(100vh - 200px)' }}>
                 {filteredTechs.map((tech) => (
                     <ListItem
