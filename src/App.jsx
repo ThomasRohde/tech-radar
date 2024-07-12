@@ -1,4 +1,4 @@
-import { Box, createTheme, CssBaseline, GlobalStyles, ThemeProvider } from '@mui/material'
+import { Box, CssBaseline, GlobalStyles, ThemeProvider } from '@mui/material'
 import React from 'react'
 import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom'
 import AdminPage from './components/AdminPage'
@@ -6,16 +6,7 @@ import BurgerMenu from './components/BurgerMenu'
 import { TechnologiesProvider } from './components/DataManager'
 import QuadrantPage from './components/QuadrantPage'
 import Radar from './components/Radar'
-
-const theme = createTheme({
-  components: {
-    MuiButtonBase: {
-      defaultProps: {
-        disableRipple: true,
-      },
-    },
-  },
-});
+import theme from './theme'; // Import the new theme
 
 const globalStyles = (
   <GlobalStyles

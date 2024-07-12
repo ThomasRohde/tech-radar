@@ -66,22 +66,27 @@ const TechDetails = ({ tech, onClose }) => {
       fullWidth
       maxWidth="sm"
     >
-      <DialogTitle>{tech ? 'Edit Technology' : 'Add New Technology'}</DialogTitle>
-      <DialogContent>
+      <DialogTitle sx={{ bgcolor: theme.palette.primary.main, color: theme.palette.primary.contrastText }}>
+        {tech ? 'Edit Technology' : 'Add New Technology'}
+      </DialogTitle>
+      <DialogContent sx={{ 
+        bgcolor: theme.palette.background.paper, 
+        color: theme.palette.text.primary,
+        '& .MuiTextField-root, & .MuiFormControl-root': { my: 1 }
+      }}>
         <Box component="form" onSubmit={handleSubmit} sx={{ pt: 2 }}>
           <TextField
             fullWidth
-            margin="normal"
             name="name"
             label="Name"
             value={formData.name}
             onChange={handleChange}
             required
+            variant="outlined"
           />
-          <FormControl fullWidth margin="normal" variant="outlined">
-            <InputLabel id="ring-label">Ring</InputLabel>
+          <FormControl fullWidth variant="outlined">
+            <InputLabel>Ring</InputLabel>
             <Select
-              labelId="ring-label"
               name="ring"
               value={formData.ring}
               onChange={handleChange}
@@ -93,10 +98,9 @@ const TechDetails = ({ tech, onClose }) => {
               ))}
             </Select>
           </FormControl>
-          <FormControl fullWidth margin="normal" variant="outlined">
-            <InputLabel id="quadrant-label">Quadrant</InputLabel>
+          <FormControl fullWidth variant="outlined">
+            <InputLabel>Quadrant</InputLabel>
             <Select
-              labelId="quadrant-label"
               name="quadrantId"
               value={formData.quadrantId}
               onChange={handleChange}
@@ -108,10 +112,9 @@ const TechDetails = ({ tech, onClose }) => {
               ))}
             </Select>
           </FormControl>
-          <FormControl fullWidth margin="normal" variant="outlined">
-            <InputLabel id="status-label">Status</InputLabel>
+          <FormControl fullWidth variant="outlined">
+            <InputLabel>Status</InputLabel>
             <Select
-              labelId="status-label"
               name="status"
               value={formData.status}
               onChange={handleChange}
@@ -125,7 +128,6 @@ const TechDetails = ({ tech, onClose }) => {
           </FormControl>
           <TextField
             fullWidth
-            margin="normal"
             name="description"
             label="Description"
             multiline
@@ -133,19 +135,19 @@ const TechDetails = ({ tech, onClose }) => {
             value={formData.description}
             onChange={handleChange}
             required
+            variant="outlined"
           />
           <TextField
             fullWidth
-            margin="normal"
             name="sponsor"
             label="Sponsor"
             value={formData.sponsor}
             onChange={handleChange}
             required
+            variant="outlined"
           />
           <TextField
             fullWidth
-            margin="normal"
             name="date"
             label="Date"
             type="date"
@@ -155,11 +157,14 @@ const TechDetails = ({ tech, onClose }) => {
               shrink: true,
             }}
             required
+            variant="outlined"
           />
         </Box>
       </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
+      <DialogActions sx={{ bgcolor: theme.palette.background.paper, p: 2 }}>
+        <Button onClick={onClose} color="secondary">
+          Cancel
+        </Button>
         <Button onClick={handleSubmit} variant="contained" color="primary">
           {tech ? 'Update' : 'Add'}
         </Button>

@@ -67,16 +67,16 @@ const TechnologyRadar = () => {
         [svgSize, technologies]);
 
     const getColor = (quadrantIndex) => {
-        const colors = ["#86B782", "#1EBB9B", "#F38A3E", "#B32059"];
+        const colors = [theme.palette.success.main, theme.palette.info.main, theme.palette.warning.main, theme.palette.error.main];
         return colors[quadrantIndex];
     };
 
     const getStatusFill = (status) => {
         switch (status) {
-            case "New": return "#86B782";
-            case "Moved in/out": return "#1EBB9B";
-            case "No change": return "#F38A3E";
-            default: return "#F38A3E";
+            case "New": return theme.palette.success.light;
+            case "Moved in/out": return theme.palette.info.light;
+            case "No change": return theme.palette.warning.light;
+            default: return theme.palette.warning.light;
         }
     };
 
@@ -135,15 +135,14 @@ const TechnologyRadar = () => {
         const multiline = children === "Languages & Frameworks";
         const [firstLine, secondLine] = multiline ? children.split(' & ') : [children];
 
-
         return (
             <g onClick={() => handleQuadrantClick(quadrantIndex)} style={{ cursor: 'pointer' }}>
                 <text
                     x={x}
                     y={y}
-                    fontSize="18"
-                    fontWeight="bold"
-                    fill="#333"
+                    fontSize={theme.typography.subtitle1.fontSize}
+                    fontWeight={theme.typography.subtitle1.fontWeight}
+                    fill={theme.palette.text.primary}
                     textAnchor={textAnchor}
                 >
                     {firstLine}
@@ -157,6 +156,7 @@ const TechnologyRadar = () => {
             </g>
         );
     };
+
     if (loading) {
         return (
             <Box sx={{
@@ -168,7 +168,7 @@ const TechnologyRadar = () => {
                 position: 'fixed',
                 top: 0,
                 left: 0,
-                backgroundColor: 'rgba(255, 255, 255, 0.8)'
+                backgroundColor: theme.palette.background.default
             }}>
                 <CircularProgress size={60} />
             </Box>
@@ -183,7 +183,7 @@ const TechnologyRadar = () => {
                 alignItems: 'center',
                 height: '100vh',
                 width: '100vw',
-                padding: 2,
+                padding: theme.spacing(2),
                 textAlign: 'center'
             }}>
                 <Typography color="error" variant="h6">
@@ -199,7 +199,7 @@ const TechnologyRadar = () => {
             height: '100%',
             display: 'flex',
             flexDirection: 'column',
-            background: "#F2F1F1",
+            backgroundColor: theme.palette.background.default,
             overflow: 'hidden'
         }}>
             <Box sx={{
@@ -221,10 +221,12 @@ const TechnologyRadar = () => {
                     width: '100%',
                     overflow: 'hidden'
                 }}>
-                    <Typography variant="h4" component="h2" sx={{ mb: 0 }}>
+                    <Typography variant="h4" component="h1" sx={{ mb: theme.spacing(1), color: theme.palette.text.primary }}>
                         Technology Radar
                     </Typography>
-                    <Typography variant="body2" sx={{ mb: 2 }}>Hover over a technology for more information</Typography>
+                    <Typography variant="body2" sx={{ mb: theme.spacing(2), color: theme.palette.text.secondary }}>
+                        Hover over a technology for more information
+                    </Typography>
                     <Box
                         ref={radarRef}
                         component="svg"
@@ -234,8 +236,8 @@ const TechnologyRadar = () => {
                         preserveAspectRatio="xMidYMid meet"
                         sx={{ maxWidth: '100%', maxHeight: '100%' }}
                     >
-                        <rect width={svgSize.width} height={svgSize.height} fill="#F2F1F1" />
-                        <circle cx={svgSize.width / 2} cy={svgSize.height / 2} r={Math.min(svgSize.width, svgSize.height) / 2} fill="white" />
+                        <rect width={svgSize.width} height={svgSize.height} fill={theme.palette.background.default} />
+                        <circle cx={svgSize.width / 2} cy={svgSize.height / 2} r={Math.min(svgSize.width, svgSize.height) / 2} fill={theme.palette.background.paper} />
                         {RINGS.map((_, index) => (
                             <circle
                                 key={index}
@@ -243,20 +245,20 @@ const TechnologyRadar = () => {
                                 cy={svgSize.height / 2}
                                 r={(4 - index) * (Math.min(svgSize.width, svgSize.height) / 8)}
                                 fill="none"
-                                stroke="#ddd"
+                                stroke={theme.palette.divider}
                                 strokeWidth="2"
                             />
                         ))}
-                        <line x1="0" y1={svgSize.height / 2} x2={svgSize.width} y2={svgSize.height / 2} stroke="#ddd" strokeWidth="2" />
-                        <line x1={svgSize.width / 2} y1="0" x2={svgSize.width / 2} y2={svgSize.height} stroke="#ddd" strokeWidth="2" />
+                        <line x1="0" y1={svgSize.height / 2} x2={svgSize.width} y2={svgSize.height / 2} stroke={theme.palette.divider} strokeWidth="2" />
+                        <line x1={svgSize.width / 2} y1="0" x2={svgSize.width / 2} y2={svgSize.height} stroke={theme.palette.divider} strokeWidth="2" />
                         {!isExtraSmallScreen && RINGS.map((ring, index) => (
                             <text
                                 key={ring}
                                 x={svgSize.width / 2 + 10}
                                 y={(4 - index) * (Math.min(svgSize.width, svgSize.height) / 8) - 5}
-                                fontSize={Math.min(svgSize.width, svgSize.height) / 50}
+                                fontSize={theme.typography.caption.fontSize}
                                 textAnchor="start"
-                                fill="#333"
+                                fill={theme.palette.text.secondary}
                             >
                                 {ring}
                             </text>
@@ -274,9 +276,9 @@ const TechnologyRadar = () => {
                             const { x, y } = tech.position;
                             return (
                                 <g key={tech.id} onMouseEnter={() => setHoveredTech(tech)} onMouseLeave={() => setHoveredTech(null)}>
-                                    <circle cx={x} cy={y} r={Math.min(svgSize.width, svgSize.height) / 50} fill={getColor(tech.quadrantId)} stroke="white" strokeWidth="1" />
+                                    <circle cx={x} cy={y} r={Math.min(svgSize.width, svgSize.height) / 50} fill={getColor(tech.quadrantId)} stroke={theme.palette.background.paper} strokeWidth="1" />
                                     <circle cx={x} cy={y} r={Math.min(svgSize.width, svgSize.height) / 70} fill={getStatusFill(tech.status)} />
-                                    <text x={x} y={y} textAnchor="middle" dominantBaseline="central" fill="white" fontSize={Math.min(svgSize.width, svgSize.height) / 80}>{tech.id}</text>
+                                    <text x={x} y={y} textAnchor="middle" dominantBaseline="central" fill={theme.palette.background.paper} fontSize={theme.typography.caption.fontSize}>{tech.id}</text>
                                 </g>
                             );
                         })}
@@ -285,20 +287,20 @@ const TechnologyRadar = () => {
 
                 <Box sx={{
                     width: isSmallScreen ? '100%' : '300px',
-                    mt: isSmallScreen ? 2 : 0,
-                    ml: isSmallScreen ? 0 : 2,
+                    mt: isSmallScreen ? theme.spacing(2) : 0,
+                    ml: isSmallScreen ? 0 : theme.spacing(2),
                     flexShrink: 0,
                     overflowY: 'auto',
                     maxHeight: isSmallScreen ? '30vh' : '100%'
                 }}>
-                    <Paper sx={{ p: 2 }}>
+                    <Paper sx={{ p: theme.spacing(2) }}>
                         <Typography variant="h6" gutterBottom>Status Legend</Typography>
                         <List dense>
                             {["New", "Moved in/out", "No change"].map((status) => (
                                 <ListItem key={status}>
                                     <ListItemIcon>
                                         <Box component="svg" width={20} height={20} viewBox="0 0 20 20">
-                                            <circle cx="10" cy="10" r="8" fill={getStatusFill(status)} stroke="white" strokeWidth="2" />
+                                            <circle cx="10" cy="10" r="8" fill={getStatusFill(status)} stroke={theme.palette.background.paper} strokeWidth="2" />
                                         </Box>
                                     </ListItemIcon>
                                     <ListItemText primary={status} />
@@ -311,15 +313,17 @@ const TechnologyRadar = () => {
 
             {hoveredTech && (
                 <Paper
+                    elevation={3}
                     sx={{
                         position: "fixed",
                         left: tooltipPosition.x,
                         top: tooltipPosition.y,
-                        p: 2,
+                        p: theme.spacing(2),
                         maxWidth: 300,
                         transform: 'translate(10px, 10px)',
-                        zIndex: 1000,
-                        pointerEvents: 'none'
+                        zIndex: theme.zIndex.tooltip,
+                        pointerEvents: 'none',
+                        backgroundColor: theme.palette.background.paper
                     }}
                 >
                     <Typography variant="h6" gutterBottom>{hoveredTech.name}</Typography>
