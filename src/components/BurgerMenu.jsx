@@ -21,14 +21,16 @@ import {
   useTheme
 } from '@mui/material';
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const BurgerMenu = ({ onNavigate }) => {
+const BurgerMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const navigate = useNavigate();
 
   const toggleDrawer = (open) => (event) => {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
@@ -37,11 +39,11 @@ const BurgerMenu = ({ onNavigate }) => {
     setIsOpen(open);
   };
 
-  const handleNavigation = (page) => {
-    if (page === 'admin') {
+  const handleNavigation = (path) => {
+    if (path === '/admin') {
       setIsLoginOpen(true);
     } else {
-      onNavigate(page);
+      navigate(path);
     }
     setIsOpen(false);
   };
@@ -49,21 +51,21 @@ const BurgerMenu = ({ onNavigate }) => {
   const handleLogin = () => {
     if (username === import.meta.env.VITE_ADMIN_USERNAME && password === import.meta.env.VITE_ADMIN_PASSWORD) {
       setIsLoginOpen(false);
-      onNavigate('admin');
+      navigate('/admin');
     } else {
       alert('Invalid credentials');
     }
   };
 
   const menuItems = [
-    { text: 'Home', icon: <HomeIcon />, onClick: () => handleNavigation('home') },
-    { text: 'Admin', icon: <AdminIcon />, onClick: () => handleNavigation('admin') },
+    { text: 'Home', icon: <HomeIcon />, onClick: () => handleNavigation('/') },
+    { text: 'Admin', icon: <AdminIcon />, onClick: () => handleNavigation('/admin') },
   ];
 
   const textFieldSx = {
     '& .MuiOutlinedInput-root': {
       '&.Mui-focused fieldset': {
-        borderColor: 'rgba(0, 0, 0, 0)', // Use the default border color
+        borderColor: 'rgba(0, 0, 0, 0)',
       },
     },
     '& .MuiInputLabel-root': {
@@ -71,7 +73,7 @@ const BurgerMenu = ({ onNavigate }) => {
       padding: '0 4px',
     },
     '& .MuiInputLabel-root.Mui-focused': {
-      color: 'rgba(0, 0, 0, 0.6)', // Use the default label color
+      color: 'rgba(0, 0, 0, 0.6)',
     },
   };
 

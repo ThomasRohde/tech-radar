@@ -11,6 +11,7 @@ import {
     useTheme
 } from "@mui/material";
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate } from 'react-router-dom';
 import { calculateTechnologiesWithPositions } from '../utils/radarCalculations';
 import { useTechnologies } from './DataManager';
 
@@ -24,6 +25,7 @@ const QUADRANTS = [
 const RINGS = ["Adopt", "Trial", "Assess", "Hold"];
 
 const TechnologyRadar = () => {
+    const navigate = useNavigate();
     const { technologies, loading, error } = useTechnologies();
     const [hoveredTech, setHoveredTech] = useState(null);
     const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
@@ -97,7 +99,7 @@ const TechnologyRadar = () => {
     }, []);
 
     const handleQuadrantClick = (quadrantIndex) => {
-        console.log(`Clicked on ${QUADRANTS[quadrantIndex]}`);
+        navigate(`/quadrant/${quadrantIndex}`);
     };
 
     const QuadrantLabel = ({ quadrantIndex, children, onClick }) => {
@@ -133,8 +135,9 @@ const TechnologyRadar = () => {
         const multiline = children === "Languages & Frameworks";
         const [firstLine, secondLine] = multiline ? children.split(' & ') : [children];
 
+
         return (
-            <g onClick={onClick} style={{ cursor: 'pointer' }}>
+            <g onClick={() => handleQuadrantClick(quadrantIndex)} style={{ cursor: 'pointer' }}>
                 <text
                     x={x}
                     y={y}
