@@ -13,7 +13,7 @@ import {
   useMediaQuery,
   useTheme
 } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TechDetails from './TechDetails';
 import TechList from './TechList';
@@ -24,6 +24,14 @@ const AdminPage = () => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const navigate = useNavigate();
+  const mainContentRef = useRef(null);
+
+  useEffect(() => {
+    // Set focus to the main content area when the component mounts
+    if (mainContentRef.current) {
+      mainContentRef.current.focus();
+    }
+  }, []);
 
   const handleSelectTech = (tech) => {
     setSelectedTech(tech);
@@ -77,8 +85,16 @@ const AdminPage = () => {
         </Toolbar>
       </AppBar>
 
-      <Container maxWidth="lg" sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', mt: 4, mb: 4, overflow: 'hidden' }}>
-        <Paper elevation={3} sx={{ p: theme.spacing(3), display: 'flex', flexDirection: 'column', height: '100%' }}>
+      <Container 
+        maxWidth="lg" 
+        sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', mt: 4, mb: 4, overflow: 'hidden' }}
+      >
+        <Paper 
+          elevation={3} 
+          sx={{ p: theme.spacing(3), display: 'flex', flexDirection: 'column', height: '100%' }}
+          ref={mainContentRef}
+          tabIndex="-1"  // Make the element focusable without including it in the natural tab order
+        >
           <Typography variant="h6" gutterBottom>
             Manage Technologies
           </Typography>

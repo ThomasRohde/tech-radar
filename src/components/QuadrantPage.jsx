@@ -1,4 +1,5 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {
     AppBar,
     Box,
@@ -7,17 +8,18 @@ import {
     List,
     ListItem,
     ListItemText,
-    Paper,
     Toolbar,
     Typography,
     useMediaQuery,
-    useTheme
+    useTheme,
 } from '@mui/material';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTechnologies } from './DataManager';
+import QuadrantSegment from './QuadrantSegment';
 
 const QUADRANTS = ["Tools", "Techniques", "Platforms", "Languages & Frameworks"];
+const RINGS = ["Adopt", "Trial", "Assess", "Hold"];
 
 const QuadrantPage = () => {
   const { id } = useParams();
@@ -25,12 +27,32 @@ const QuadrantPage = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { technologies } = useTechnologies();
+  const [svgSize, setSvgSize] = useState(800);
 
   const quadrantId = parseInt(id, 10);
   const quadrantName = QUADRANTS[quadrantId];
 
-  // Filter technologies for this quadrant
   const quadrantTechnologies = technologies.filter(tech => tech.quadrantId === quadrantId);
+
+  const technologiesByRing = RINGS.map(ring => ({
+    ring,
+    technologies: quadrantTechnologies.filter(tech => tech.ring === ring)
+  }));
+
+  useEffect(() => {
+    const updateSize = () => {
+      const size = Math.min(
+        window.innerWidth * (isMobile ? 0.9 : 0.45),
+        window.innerHeight * 0.9
+      );
+      setSvgSize(size);
+    };
+
+    window.addEventListener('resize', updateSize);
+    updateSize();
+
+    return () => window.removeEventListener('resize', updateSize);
+  }, [isMobile]);
 
   return (
     <Box sx={{ 
@@ -50,7 +72,7 @@ const QuadrantPage = () => {
       >
         <Toolbar sx={{ 
           minHeight: { xs: 56, sm: 64 },
-          pl: { xs: theme.spacing(7), sm: theme.spacing(8) }, // Increased left padding to account for burger menu
+          pl: { xs: theme.spacing(7), sm: theme.spacing(8) },
           pr: theme.spacing(2),
         }}>
           <IconButton 
@@ -67,52 +89,56 @@ const QuadrantPage = () => {
           </Typography>
         </Toolbar>
       </AppBar>
+
       <Box sx={{ 
         flexGrow: 1,
-        padding: theme.spacing(3),
-        overflow: 'auto',
-        paddingTop: { xs: theme.spacing(2), sm: theme.spacing(3) }, // Adjust top padding for mobile
+        display: 'flex',
+        flexDirection: { xs: 'column', md: 'row' },
+        overflow: 'hidden',
       }}>
-        <Paper elevation={2} sx={{ p: theme.spacing(3), mb: theme.spacing(3) }}>
-          <Typography variant="h6" gutterBottom>
-            About {quadrantName}
-          </Typography>
-          <Typography variant="body1">
-            This section provides an overview of the technologies in the {quadrantName.toLowerCase()} quadrant.
-            These technologies are crucial for our organization's technical strategy and innovation.
-          </Typography>
-        </Paper>
+        <Box sx={{ 
+          width: { xs: '100%', md: '50%' },
+          p: 3,
+          overflowY: 'auto',
+        }}>
+          {technologiesByRing.map(({ ring, technologies }) => (
+            <Box key={ring} sx={{ mb: 4 }}>
+              <Typography variant="h6" gutterBottom>
+                {ring}
+                <IconButton size="small">
+                  <ExpandMoreIcon />
+                </IconButton>
+              </Typography>
+              <List>
+                {technologies.map((tech, index) => (
+                  <React.Fragment key={tech.id}>
+                    <ListItem>
+                      <ListItemText
+                        primary={`${tech.id}. ${tech.name}`}
+                        secondary={tech.description}
+                      />
+                    </ListItem>
+                    {index < technologies.length - 1 && <Divider />}
+                  </React.Fragment>
+                ))}
+              </List>
+            </Box>
+          ))}
+        </Box>
 
-        <Paper elevation={2} sx={{ p: theme.spacing(3) }}>
-          <Typography variant="h6" gutterBottom>
-            Technologies in this Quadrant
-          </Typography>
-          <List>
-            {quadrantTechnologies.map((tech, index) => (
-              <React.Fragment key={tech.id}>
-                <ListItem alignItems="flex-start">
-                  <ListItemText
-                    primary={tech.name}
-                    secondary={
-                      <React.Fragment>
-                        <Typography
-                          sx={{ display: 'inline' }}
-                          component="span"
-                          variant="body2"
-                          color="text.primary"
-                        >
-                          Ring: {tech.ring}
-                        </Typography>
-                        {` — ${tech.description}`}
-                      </React.Fragment>
-                    }
-                  />
-                </ListItem>
-                {index < quadrantTechnologies.length - 1 && <Divider component="li" />}
-              </React.Fragment>
-            ))}
-          </List>
-        </Paper>
+        <Box sx={{ 
+          width: { xs: '100%', md: '50%' },
+          p: 3,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+          <QuadrantSegment 
+            quadrantId={quadrantId} 
+            technologies={quadrantTechnologies} 
+            svgSize={svgSize}
+          />
+        </Box>
       </Box>
     </Box>
   );
