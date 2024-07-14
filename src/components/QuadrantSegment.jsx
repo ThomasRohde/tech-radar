@@ -1,10 +1,13 @@
 import { Box, Paper, Typography, useTheme } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
+import { calculateTechnologiesWithPositions } from '../utils/radarCalculations';
 
 const QuadrantSegment = ({ quadrantId, technologies, svgSize }) => {
   const theme = useTheme();
   const [hoveredTech, setHoveredTech] = useState(null);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
+
+  const RINGS = ['Adopt', 'Trial', 'Assess', 'Hold'];
 
   const getQuadrantPath = (quadrantId) => {
     const radius = svgSize / 2;
@@ -36,36 +39,9 @@ const QuadrantSegment = ({ quadrantId, technologies, svgSize }) => {
     }
   };
 
-  const calculatePosition = (tech, index) => {
-    const angle = (index / technologies.length) * Math.PI / 2;
-    const ringIndex = ['Adopt', 'Trial', 'Assess', 'Hold'].indexOf(tech.ring);
-    const radius = ((ringIndex + 1) / 4) * (svgSize / 2);
-    let x, y;
-
-    switch (quadrantId) {
-      case 3: // Tools (upper right)
-        x = Math.cos(angle) * radius;
-        y = Math.sin(angle) * radius;
-        break;
-      case 2: // Techniques (upper left)
-        x = -Math.sin(angle) * radius;
-        y = Math.cos(angle) * radius;
-        break;
-      case 1: // Platforms (lower left)
-        x = -Math.cos(angle) * radius;
-        y = -Math.sin(angle) * radius;
-        break;
-      case 0: // Languages & Frameworks (lower right)
-        x = Math.sin(angle) * radius;
-        y = -Math.cos(angle) * radius;
-        break;
-      default:
-        x = 0;
-        y = 0;
-    }
-
-    return { x, y };
-  };
+  const technologiesWithPositions = useMemo(() => {
+    return calculateTechnologiesWithPositions(technologies, { width: svgSize, height: svgSize }, RINGS);
+  }, [technologies, svgSize]);
 
   const handleMouseEnter = (tech, event) => {
     setHoveredTech(tech);
@@ -79,60 +55,60 @@ const QuadrantSegment = ({ quadrantId, technologies, svgSize }) => {
   return (
     <Box sx={{ position: 'relative', width: svgSize, height: svgSize }}>
       <svg
-        viewBox={`-${svgSize / 2} -${svgSize / 2} ${svgSize} ${svgSize}`}
+        viewBox={`0 0 ${svgSize} ${svgSize}`}
         width={svgSize}
         height={svgSize}
       >
-        <path
-          d={getQuadrantPath(quadrantId)}
-          fill={theme.palette.background.paper}
-          stroke={theme.palette.divider}
-        />
-        {['Adopt', 'Trial', 'Assess', 'Hold'].map((ring, index) => (
+        <g transform={`translate(${svgSize / 2}, ${svgSize / 2})`}>
           <path
-            key={ring}
             d={getQuadrantPath(quadrantId)}
-            fill="none"
+            fill={theme.palette.background.paper}
             stroke={theme.palette.divider}
-            strokeWidth="1"
-            transform={`scale(${(index + 1) / 4})`}
           />
-        ))}
-        {technologies.map((tech, index) => {
-          const { x, y } = calculatePosition(tech, index);
-          return (
-            <g
-              key={tech.id}
-              onMouseEnter={(e) => handleMouseEnter(tech, e)}
-              onMouseLeave={handleMouseLeave}
-            >
-              <circle
-                cx={x}
-                cy={y}
-                r={svgSize / 50}
-                fill={getColor(quadrantId)}
-                stroke={theme.palette.background.paper}
-                strokeWidth="1"
-              />
-              <circle
-                cx={x}
-                cy={y}
-                r={svgSize / 70}
-                fill={getStatusFill(tech.status)}
-              />
-              <text
-                x={x}
-                y={y}
-                textAnchor="middle"
-                dominantBaseline="central"
-                fill={theme.palette.background.paper}
-                fontSize={theme.typography.caption.fontSize}
+          {RINGS.map((ring, index) => (
+            <path
+              key={ring}
+              d={getQuadrantPath(quadrantId)}
+              fill="none"
+              stroke={theme.palette.divider}
+              strokeWidth="1"
+              transform={`scale(${(index + 1) / 4})`}
+            />
+          ))}
+          {technologiesWithPositions.map((tech) => {
+            const { x, y } = tech.position;
+            // Adjust coordinates to be relative to the quadrant's center
+            const adjustedX = x - svgSize / 2;
+            const adjustedY = y - svgSize / 2;
+            return (
+              <g
+                key={tech.id}
+                transform={`translate(${adjustedX}, ${adjustedY})`}
+                onMouseEnter={(e) => handleMouseEnter(tech, e)}
+                onMouseLeave={handleMouseLeave}
               >
-                {tech.id}
-              </text>
-            </g>
-          );
-        })}
+                <circle
+                  r={svgSize / 50}
+                  fill={getColor(quadrantId)}
+                  stroke={theme.palette.background.paper}
+                  strokeWidth="1"
+                />
+                <circle
+                  r={svgSize / 70}
+                  fill={getStatusFill(tech.status)}
+                />
+                <text
+                  textAnchor="middle"
+                  dominantBaseline="central"
+                  fill={theme.palette.background.paper}
+                  fontSize={theme.typography.caption.fontSize}
+                >
+                  {tech.id}
+                </text>
+              </g>
+            );
+          })}
+        </g>
       </svg>
       {hoveredTech && (
         <Paper
