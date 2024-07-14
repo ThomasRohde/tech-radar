@@ -66,7 +66,7 @@ const applyForces = (node, nodes, svgSize) => {
     return { fx, fy };
 };
 
-const updatePosition = (node, force, svgSize) => {
+const updatePosition = (node, force) => {
     const damping = 0.3;
 
     node.position.x += force.fx * damping;

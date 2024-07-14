@@ -17,7 +17,7 @@ import {
   Typography,
   useTheme
 } from '@mui/material';
-import { useTechnologies } from './DataManager';
+import useTechnologies from './useTechnologies';
 
 const QUADRANTS = ["Tools", "Techniques", "Platforms", "Languages & Frameworks"];
 const RINGS = ["Adopt", "Trial", "Assess", "Hold"];

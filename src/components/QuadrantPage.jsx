@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import InfoIcon from "@mui/icons-material/Info";
-import { useTechnologies } from "./DataManager";
+import useTechnologies from './useTechnologies';
 import QuadrantSegment from "./QuadrantSegment";
 import { calculateTechnologiesWithPositions } from '../utils/radarCalculations';
 import SharedAppBar from './SharedAppBar';

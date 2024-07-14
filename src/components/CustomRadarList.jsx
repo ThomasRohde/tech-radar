@@ -1,3 +1,6 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/no-unescaped-entities */
+/* eslint-disable react/prop-types */
 import React from 'react';
 import {
   List,
@@ -10,7 +13,7 @@ import {
   Button,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import { useTechnologies } from './DataManager';
+import useTechnologies from './useTechnologies';
 
 const CustomRadarList = ({ onSelectRadar, onManageTechnologies }) => {
   const { getAllCustomRadars } = useTechnologies();

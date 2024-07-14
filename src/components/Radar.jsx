@@ -15,7 +15,7 @@ import {
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { calculateTechnologiesWithPositions } from "../utils/radarCalculations";
-import { useTechnologies } from "./DataManager";
+import useTechnologies from './useTechnologies';
 import SharedAppBar from "./SharedAppBar";
 
 const QUADRANTS = [

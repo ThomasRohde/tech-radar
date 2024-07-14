@@ -10,7 +10,7 @@ import {
   useMediaQuery,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import { useTechnologies } from './DataManager';
+import useTechnologies from './useTechnologies';
 import SharedAppBar from './SharedAppBar';
 import CustomRadarList from './CustomRadarList';
 import CustomRadarDetails from './CustomRadarDetails';

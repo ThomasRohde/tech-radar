@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { Delete as DeleteIcon, Edit as EditIcon, Restore as RestoreIcon } from '@mui/icons-material';
 import {
     Box,
@@ -17,7 +18,7 @@ import {
     useTheme
 } from '@mui/material';
 import React, { useMemo, useState } from 'react';
-import { useTechnologies } from './DataManager';
+import useTechnologies from './useTechnologies';
 
 const QUADRANTS = ["Tools", "Techniques", "Platforms", "Languages & Frameworks"];
 const RINGS = ["Adopt", "Trial", "Assess", "Hold"];

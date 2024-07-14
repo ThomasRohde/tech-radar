@@ -16,7 +16,7 @@ import {
     useTheme
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import { useTechnologies } from './DataManager';
+import useTechnologies from './useTechnologies';
 
 const QUADRANTS = ["Tools", "Techniques", "Platforms", "Languages & Frameworks"];
 const RINGS = ["Adopt", "Trial", "Assess", "Hold"];
