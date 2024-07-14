@@ -82,10 +82,9 @@ const TechnologyRadar = () => {
 
     const handleMouseMove = (event) => {
         if (radarRef.current) {
-            const rect = radarRef.current.getBoundingClientRect();
             setTooltipPosition({
-                x: event.clientX - rect.left,
-                y: event.clientY - rect.top
+                x: event.clientX,
+                y: event.clientY
             });
         }
     };
@@ -315,7 +314,7 @@ const TechnologyRadar = () => {
                 <Paper
                     elevation={3}
                     sx={{
-                        position: "fixed",
+                        position: "absolute",
                         left: tooltipPosition.x,
                         top: tooltipPosition.y,
                         p: theme.spacing(2),
