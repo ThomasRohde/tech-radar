@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
 import {
   Box,
   CircularProgress,
@@ -47,17 +49,19 @@ const TechnologyRadar = () => {
 
   useEffect(() => {
     updateSize();
-
+  
     const resizeObserver = new ResizeObserver(updateSize);
-    if (containerRef.current) {
-      resizeObserver.observe(containerRef.current);
+    const currentContainer = containerRef.current;
+  
+    if (currentContainer) {
+      resizeObserver.observe(currentContainer);
     }
-
+  
     window.addEventListener("resize", updateSize);
-
+  
     return () => {
-      if (containerRef.current) {
-        resizeObserver.unobserve(containerRef.current);
+      if (currentContainer) {
+        resizeObserver.unobserve(currentContainer);
       }
       window.removeEventListener("resize", updateSize);
     };
