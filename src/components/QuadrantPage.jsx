@@ -3,21 +3,21 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {
   AppBar,
   Box,
-  Collapse,
-  Divider,
   IconButton,
   List,
   ListItem,
+  ListItemButton,
   ListItemText,
   Toolbar,
   Typography,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTechnologies } from "./DataManager";
 import QuadrantSegment from "./QuadrantSegment";
+import { calculateTechnologiesWithPositions } from '../utils/radarCalculations';
 
 const QUADRANTS = [
   "Tools",
@@ -34,26 +34,34 @@ const QuadrantPage = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { technologies } = useTechnologies();
   const [svgSize, setSvgSize] = useState(800);
-  const [expandedRings, setExpandedRings] = useState(
-    RINGS.reduce((acc, ring) => ({ ...acc, [ring]: true }), {})
-  );
+  const [expandedTech, setExpandedTech] = useState(null);
 
   const quadrantId = parseInt(id, 10);
   const quadrantName = QUADRANTS[quadrantId];
 
-  const quadrantTechnologies = technologies.filter(
-    (tech) => tech.quadrantId === quadrantId
+  const quadrantTechnologies = useMemo(() => 
+    technologies.filter((tech) => tech.quadrantId === quadrantId),
+    [technologies, quadrantId]
   );
 
-  const technologiesByRing = RINGS.map((ring) => ({
-    ring,
-    technologies: quadrantTechnologies.filter((tech) => tech.ring === ring),
-  }));
+  const technologiesByRing = useMemo(() => 
+    RINGS.map((ring) => ({
+      ring,
+      technologies: quadrantTechnologies.filter((tech) => tech.ring === ring),
+    })),
+    [quadrantTechnologies]
+  );
+
+  const calculatePositions = useCallback(() => {
+    return calculateTechnologiesWithPositions(quadrantTechnologies, { width: svgSize, height: svgSize }, RINGS);
+  }, [quadrantTechnologies, svgSize]);
+
+  const technologiesWithPositions = useMemo(calculatePositions, [calculatePositions]);
 
   useEffect(() => {
     const updateSize = () => {
       const size = Math.min(
-        window.innerWidth * (isMobile ? 0.9 : 0.45),
+        window.innerWidth * (isMobile ? 0.9 : 0.6),
         window.innerHeight * 0.9
       );
       setSvgSize(size);
@@ -65,8 +73,8 @@ const QuadrantPage = () => {
     return () => window.removeEventListener("resize", updateSize);
   }, [isMobile]);
 
-  const handleExpandRing = (ring) => {
-    setExpandedRings((prev) => ({ ...prev, [ring]: !prev[ring] }));
+  const handleExpandTech = (techId) => {
+    setExpandedTech(expandedTech === techId ? null : techId);
   };
 
   return (
@@ -123,59 +131,57 @@ const QuadrantPage = () => {
       >
         <Box
           sx={{
-            width: { xs: "100%", md: "50%" },
+            width: { xs: "100%", md: "30%" },
             p: 3,
             overflowY: "auto",
           }}
         >
           {technologiesByRing.map(({ ring, technologies }) => (
             <Box key={ring} sx={{ mb: 4 }}>
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  cursor: "pointer",
-                }}
-                onClick={() => handleExpandRing(ring)}
-              >
-                <Typography variant="h6" gutterBottom>
-                  {ring}
-                </Typography>
-                <IconButton size="small">
-                  <ExpandMoreIcon
+              <Typography variant="h6" gutterBottom>
+                {ring}
+              </Typography>
+              <List>
+                {technologies.map((tech) => (
+                  <ListItem
+                    key={tech.id}
+                    disablePadding
                     sx={{
-                      transform: expandedRings[ring]
-                        ? "rotate(180deg)"
-                        : "rotate(0deg)",
-                      transition: theme.transitions.create("transform", {
-                        duration: theme.transitions.duration.shortest,
-                      }),
+                      bgcolor: expandedTech === tech.id ? theme.palette.action.hover : 'transparent',
+                      mb: 1,
+                      borderRadius: 1,
                     }}
-                  />
-                </IconButton>
-              </Box>
-              <Collapse in={expandedRings[ring]}>
-                <List>
-                  {technologies.map((tech, index) => (
-                    <React.Fragment key={tech.id}>
-                      <ListItem>
-                        <ListItemText
-                          primary={`${tech.id}. ${tech.name}`}
-                          secondary={tech.description}
+                  >
+                    <ListItemButton onClick={() => handleExpandTech(tech.id)}>
+                      <ListItemText
+                        primary={`${tech.id}. ${tech.name}`}
+                        secondary={
+                          expandedTech === tech.id ? tech.description : null
+                        }
+                      />
+                      <IconButton edge="end" aria-label="expand">
+                        <ExpandMoreIcon
+                          sx={{
+                            transform: expandedTech === tech.id
+                              ? 'rotate(180deg)'
+                              : 'rotate(0deg)',
+                            transition: theme.transitions.create('transform', {
+                              duration: theme.transitions.duration.shortest,
+                            }),
+                          }}
                         />
-                      </ListItem>
-                      {index < technologies.length - 1 && <Divider />}
-                    </React.Fragment>
-                  ))}
-                </List>
-              </Collapse>
+                      </IconButton>
+                    </ListItemButton>
+                  </ListItem>
+                ))}
+              </List>
             </Box>
           ))}
         </Box>
 
         <Box
           sx={{
-            width: { xs: "100%", md: "50%" },
+            width: { xs: "100%", md: "70%" },
             p: 3,
             display: "flex",
             justifyContent: "center",
@@ -184,7 +190,7 @@ const QuadrantPage = () => {
         >
           <QuadrantSegment
             quadrantId={quadrantId}
-            technologies={quadrantTechnologies}
+            technologies={technologiesWithPositions}
             svgSize={svgSize}
           />
         </Box>

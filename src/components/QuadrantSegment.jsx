@@ -1,6 +1,5 @@
 import { Box, Paper, Typography, useTheme } from '@mui/material';
-import React, { useState, useMemo } from 'react';
-import { calculateTechnologiesWithPositions } from '../utils/radarCalculations';
+import React, { useState } from 'react';
 
 const QuadrantSegment = ({ quadrantId, technologies, svgSize }) => {
   const theme = useTheme();
@@ -39,10 +38,6 @@ const QuadrantSegment = ({ quadrantId, technologies, svgSize }) => {
     }
   };
 
-  const technologiesWithPositions = useMemo(() => {
-    return calculateTechnologiesWithPositions(technologies, { width: svgSize, height: svgSize }, RINGS);
-  }, [technologies, svgSize]);
-
   const handleMouseEnter = (tech, event) => {
     setHoveredTech(tech);
     setTooltipPosition({ x: event.clientX, y: event.clientY });
@@ -75,7 +70,7 @@ const QuadrantSegment = ({ quadrantId, technologies, svgSize }) => {
               transform={`scale(${(index + 1) / 4})`}
             />
           ))}
-          {technologiesWithPositions.map((tech) => {
+          {technologies.map((tech) => {
             const { x, y } = tech.position;
             // Adjust coordinates to be relative to the quadrant's center
             const adjustedX = x - svgSize / 2;
