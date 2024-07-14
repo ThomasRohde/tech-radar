@@ -58,30 +58,29 @@ const TechList = ({ onSelectTech }) => {
     const formControlStyle = {
         minWidth: '120px',
         '& .MuiInputLabel-root': {
-            backgroundColor: theme.palette.background.paper,
-            padding: '0 4px',
+          backgroundColor: theme.palette.background.paper,
+          padding: '0 4px',
         },
         '& .MuiOutlinedInput-root': {
-            '& fieldset': {
-                top: 0,
-                borderColor: theme.palette.grey[400], // Lighter border color by default
-            },
-            '&:hover fieldset': {
-                borderColor: theme.palette.text.primary, // Darker on hover
-            },
-            '&.Mui-focused fieldset': {
-                borderColor: theme.palette.primary.main, // Primary color on focus
-                borderWidth: '1px', // Keep border width consistent
-            },
+          '& fieldset': {
+            borderColor: theme.palette.grey[400],
+          },
+          '&:hover fieldset': {
+            borderColor: theme.palette.text.primary,
+          },
+          '&.Mui-focused fieldset': {
+            borderColor: theme.palette.primary.main,
+            borderWidth: '1px',
+          },
         },
         '& .MuiInputLabel-outlined.MuiInputLabel-shrink': {
-            transform: 'translate(14px, -6px) scale(0.75)',
+          transform: 'translate(14px, -6px) scale(0.75)',
         },
-        // Remove default focus shadow
         '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
-            boxShadow: 'none',
+          boxShadow: 'none',
         },
-    };
+      };
+    
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
