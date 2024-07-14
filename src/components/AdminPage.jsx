@@ -1,37 +1,24 @@
-import AddIcon from "@mui/icons-material/Add";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import React, { useState } from 'react';
 import {
-  AppBar,
   Box,
   Button,
   Container,
   Dialog,
-  IconButton,
   Paper,
-  Toolbar,
   Typography,
   useMediaQuery,
-  useTheme,
-} from "@mui/material";
-import React, { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import TechDetails from "./TechDetails";
-import TechList from "./TechList";
+  useTheme
+} from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import SharedAppBar from './SharedAppBar';
+import TechList from './TechList';
+import TechDetails from './TechDetails';
 
 const AdminPage = () => {
   const [selectedTech, setSelectedTech] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-  const navigate = useNavigate();
-  const mainContentRef = useRef(null);
-
-  useEffect(() => {
-    // Set focus to the main content area when the component mounts
-    if (mainContentRef.current) {
-      mainContentRef.current.focus();
-    }
-  }, []);
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
   const handleSelectTech = (tech) => {
     setSelectedTech(tech);
@@ -48,90 +35,50 @@ const AdminPage = () => {
     setSelectedTech(null);
   };
 
-  return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        height: "100vh",
-        bgcolor: theme.palette.background.default,
-        color: theme.palette.text.primary,
-      }}
+  const actionButton = (
+    <Button
+      variant="contained"
+      color="primary"
+      startIcon={<AddIcon />}
+      onClick={handleCreateTech}
+      size={isSmallScreen ? "small" : "medium"}
     >
-      <AppBar position="static" color="default" elevation={1}>
-        <Toolbar
-          sx={{
-            pl: { xs: theme.spacing(7), sm: theme.spacing(8) },
-            pr: theme.spacing(2),
-          }}
-        >
-          <IconButton
-            edge="start"
-            color="inherit"
-            aria-label="back to home"
-            onClick={() => navigate("/")}
-            sx={{ mr: theme.spacing(2) }}
-          >
-            <ArrowBackIcon />
-          </IconButton>
-          <Typography
-            variant={isSmallScreen ? "h6" : "h5"}
-            component="h1"
-            sx={{ flexGrow: 1, fontWeight: theme.typography.fontWeightMedium }}
-          >
-            Admin Page
-          </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<AddIcon />}
-            onClick={handleCreateTech}
-            size={isSmallScreen ? "small" : "medium"}
-          >
-            Add New Tech
-          </Button>
-        </Toolbar>
-      </AppBar>
+      Add New Tech
+    </Button>
+  );
 
-      <Container
-        maxWidth="lg"
-        sx={{
-          flexGrow: 1,
-          display: "flex",
-          flexDirection: "column",
-          mt: 4,
-          mb: 4,
-          overflow: "hidden",
-        }}
+  return (
+    <Box sx={{
+      display: 'flex',
+      flexDirection: 'column',
+      height: '100vh',
+      bgcolor: theme.palette.background.default,
+      color: theme.palette.text.primary,
+    }}>
+      <SharedAppBar title="Admin Page" actionButton={actionButton} />
+
+      <Container 
+        maxWidth="lg" 
+        sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', mt: 4, mb: 4, overflow: 'hidden' }}
       >
-        <Paper
-          elevation={3}
-          sx={{
-            p: theme.spacing(3),
-            display: "flex",
-            flexDirection: "column",
-            height: "100%",
-          }}
-          ref={mainContentRef}
-          tabIndex="-1" // Make the element focusable without including it in the natural tab order
+        <Paper 
+          elevation={3} 
+          sx={{ p: theme.spacing(3), display: 'flex', flexDirection: 'column', height: '100%' }}
         >
           <Typography variant="h6" gutterBottom>
             Manage Technologies
           </Typography>
-          <Typography
-            variant="body2"
-            sx={{ mb: 2, color: theme.palette.text.secondary }}
-          >
+          <Typography variant="body2" sx={{ mb: 2, color: theme.palette.text.secondary }}>
             Here you can view, add, edit, or delete technologies in the radar.
           </Typography>
-          <Box sx={{ flexGrow: 1, overflow: "hidden" }}>
+          <Box sx={{ flexGrow: 1, overflow: 'hidden' }}>
             <TechList onSelectTech={handleSelectTech} />
           </Box>
         </Paper>
       </Container>
 
-      <Dialog
-        open={isDialogOpen}
+      <Dialog 
+        open={isDialogOpen} 
         onClose={handleCloseDialog}
         fullScreen={isSmallScreen}
         fullWidth

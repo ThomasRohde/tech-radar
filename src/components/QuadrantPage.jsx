@@ -1,25 +1,23 @@
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import InfoIcon from "@mui/icons-material/Info";
+import React, { useState, useCallback, useMemo } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import {
-  AppBar,
   Box,
-  IconButton,
   List,
   ListItem,
   ListItemButton,
   ListItemText,
-  Toolbar,
   Typography,
   useMediaQuery,
   useTheme,
   Tooltip,
+  IconButton,
 } from "@mui/material";
-import React, { useEffect, useState, useCallback, useMemo } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import InfoIcon from "@mui/icons-material/Info";
 import { useTechnologies } from "./DataManager";
 import QuadrantSegment from "./QuadrantSegment";
 import { calculateTechnologiesWithPositions } from '../utils/radarCalculations';
+import SharedAppBar from './SharedAppBar';
 
 const QUADRANTS = [
   "Tools",
@@ -68,7 +66,7 @@ const QuadrantPage = () => {
 
   const technologiesWithPositions = useMemo(calculatePositions, [calculatePositions]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const updateSize = () => {
       const size = Math.min(
         window.innerWidth * (isMobile ? 0.9 : 0.6),
@@ -96,48 +94,16 @@ const QuadrantPage = () => {
   };
 
   return (
-    <Box
-      sx={{
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        bgcolor: theme.palette.background.default,
-      }}
-    >
-      <AppBar
-        position="static"
-        color="default"
-        elevation={1}
-        sx={{
-          bgcolor: theme.palette.background.paper,
-          color: theme.palette.text.primary,
-        }}
-      >
-        <Toolbar
-          sx={{
-            minHeight: { xs: 56, sm: 64 },
-            pl: { xs: theme.spacing(7), sm: theme.spacing(8) },
-            pr: theme.spacing(2),
-          }}
-        >
-          <IconButton
-            edge="start"
-            color="inherit"
-            aria-label="back to home"
-            onClick={() => navigate("/")}
-            sx={{ mr: theme.spacing(2) }}
-          >
-            <ArrowBackIcon />
-          </IconButton>
-          <Typography
-            variant={isMobile ? "h6" : "h5"}
-            component="h1"
-            sx={{ flexGrow: 1, fontWeight: theme.typography.fontWeightMedium }}
-          >
-            {quadrantName} Quadrant
-          </Typography>
-        </Toolbar>
-      </AppBar>
+    <Box sx={{
+      display: 'flex',
+      flexDirection: 'column',
+      height: '100vh',
+      bgcolor: theme.palette.background.default,
+    }}>
+      <SharedAppBar 
+        title={`${quadrantName} Quadrant`}
+        showBackButton={true}
+      />
 
       <Box
         sx={{

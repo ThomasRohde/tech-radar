@@ -13,8 +13,8 @@ import {
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { useNavigate } from 'react-router-dom';
 import { useTechnologies } from './DataManager';
+import SharedAppBar from './SharedAppBar';
 import CustomRadarList from './CustomRadarList';
 import CustomRadarDetails from './CustomRadarDetails';
 import CustomRadarTechList from './CustomRadarTechList';
@@ -26,7 +26,6 @@ const CustomRadarPage = () => {
   const { addCustomRadar, updateCustomRadar } = useTechnologies();
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
-  const navigate = useNavigate();
 
   const handleCreateRadar = () => {
     setSelectedRadar(null);
@@ -62,6 +61,18 @@ const CustomRadarPage = () => {
     handleCloseDialog();
   };
 
+  const actionButton = (
+    <Button
+      variant="contained"
+      color="primary"
+      startIcon={<AddIcon />}
+      onClick={handleCreateRadar}
+      size={isSmallScreen ? "small" : "medium"}
+    >
+      Create Radar
+    </Button>
+  );
+
   return (
     <Box sx={{
       display: 'flex',
@@ -70,34 +81,7 @@ const CustomRadarPage = () => {
       bgcolor: theme.palette.background.default,
       color: theme.palette.text.primary,
     }}>
-      <AppBar position="static" color="default" elevation={1}>
-        <Toolbar sx={{
-          pl: { xs: theme.spacing(7), sm: theme.spacing(8) },
-          pr: theme.spacing(2),
-        }}>
-          <IconButton
-            edge="start"
-            color="inherit"
-            aria-label="back to home"
-            onClick={() => navigate('/')}
-            sx={{ mr: theme.spacing(2) }}
-          >
-            <ArrowBackIcon />
-          </IconButton>
-          <Typography variant={isSmallScreen ? "h6" : "h5"} component="h1" sx={{ flexGrow: 1, fontWeight: theme.typography.fontWeightMedium }}>
-            Custom Radars
-          </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<AddIcon />}
-            onClick={handleCreateRadar}
-            size={isSmallScreen ? "small" : "medium"}
-          >
-            Create Radar
-          </Button>
-        </Toolbar>
-      </AppBar>
+      <SharedAppBar title="Custom Radars" actionButton={actionButton} />
 
       <Box sx={{ flexGrow: 1, overflow: 'auto', p: 3 }}>
         <CustomRadarList

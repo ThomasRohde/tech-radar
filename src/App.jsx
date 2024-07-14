@@ -2,7 +2,6 @@ import { Box, CssBaseline, GlobalStyles, ThemeProvider } from '@mui/material'
 import React from 'react'
 import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom'
 import AdminPage from './components/AdminPage'
-import BurgerMenu from './components/BurgerMenu'
 import { TechnologiesProvider } from './components/DataManager'
 import QuadrantPage from './components/QuadrantPage'
 import Radar from './components/Radar'
@@ -42,26 +41,14 @@ function App() {
       {globalStyles}
       <TechnologiesProvider>
         <Router>
-          <Box sx={{ display: 'flex', height: '100vh', width: '100vw' }}>
-            <BurgerMenu />
-            <Box
-              component="main"
-              sx={{
-                flexGrow: 1,
-                height: '100%',
-                width: '100%',
-                overflow: 'hidden',
-                position: 'relative',
-              }}
-            >
-              <Routes>
-                <Route path="/" element={<Radar />} />
-                <Route path="/admin" element={<AdminPage />} />
-                <Route path="/quadrant/:id" element={<QuadrantPage />} />
-                <Route path="/custom-radars" element={<CustomRadarPage />} />
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Routes>
-            </Box>
+          <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100vw' }}>
+            <Routes>
+              <Route path="/" element={<Radar />} />
+              <Route path="/admin" element={<AdminPage />} />
+              <Route path="/quadrant/:id" element={<QuadrantPage />} />
+              <Route path="/custom-radars" element={<CustomRadarPage />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
           </Box>
         </Router>
       </TechnologiesProvider>
