@@ -1,5 +1,6 @@
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import InfoIcon from "@mui/icons-material/Info";
 import {
   AppBar,
   Box,
@@ -12,6 +13,7 @@ import {
   Typography,
   useMediaQuery,
   useTheme,
+  Tooltip,
 } from "@mui/material";
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -26,6 +28,13 @@ const QUADRANTS = [
   "Languages & Frameworks",
 ];
 const RINGS = ["Adopt", "Trial", "Assess", "Hold"];
+
+const RING_DESCRIPTIONS = {
+  "Adopt": "Technologies we strongly recommend. They're proven, mature, and ready for use in our projects.",
+  "Trial": "Technologies worth pursuing. They've shown promise and we suggest trying them on projects that can handle the risk.",
+  "Assess": "Technologies worth exploring with the goal of understanding how they'll affect our organization.",
+  "Hold": "Technologies that are not recommended for new projects or continued investment, though they may be maintained for existing projects.",
+};
 
 const QuadrantPage = () => {
   const { id } = useParams();
@@ -138,8 +147,13 @@ const QuadrantPage = () => {
         >
           {technologiesByRing.map(({ ring, technologies }) => (
             <Box key={ring} sx={{ mb: 4 }}>
-              <Typography variant="h6" gutterBottom>
+              <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center' }}>
                 {ring}
+                <Tooltip title={RING_DESCRIPTIONS[ring]} arrow>
+                  <IconButton size="small" sx={{ ml: 1 }}>
+                    <InfoIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
               </Typography>
               <List>
                 {technologies.map((tech) => (
