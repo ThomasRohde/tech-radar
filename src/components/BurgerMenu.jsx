@@ -49,6 +49,7 @@ const BurgerMenu = () => {
   };
 
   const handleLogin = () => {
+    console.log(username, password, import.meta.env.VITE_ADMIN_PASSWORD);
     if (username === import.meta.env.VITE_ADMIN_USERNAME && password === import.meta.env.VITE_ADMIN_PASSWORD) {
       setIsLoginOpen(false);
       navigate('/admin');

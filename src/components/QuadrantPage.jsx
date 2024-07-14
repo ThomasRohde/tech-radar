@@ -3,6 +3,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {
     AppBar,
     Box,
+    Collapse,
     Divider,
     IconButton,
     List,
@@ -28,6 +29,7 @@ const QuadrantPage = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { technologies } = useTechnologies();
   const [svgSize, setSvgSize] = useState(800);
+  const [expandedRings, setExpandedRings] = useState(RINGS.reduce((acc, ring) => ({ ...acc, [ring]: true }), {}));
 
   const quadrantId = parseInt(id, 10);
   const quadrantName = QUADRANTS[quadrantId];
@@ -53,6 +55,10 @@ const QuadrantPage = () => {
 
     return () => window.removeEventListener('resize', updateSize);
   }, [isMobile]);
+
+  const handleExpandRing = (ring) => {
+    setExpandedRings(prev => ({ ...prev, [ring]: !prev[ring] }));
+  };
 
   return (
     <Box sx={{ 
@@ -103,25 +109,43 @@ const QuadrantPage = () => {
         }}>
           {technologiesByRing.map(({ ring, technologies }) => (
             <Box key={ring} sx={{ mb: 4 }}>
-              <Typography variant="h6" gutterBottom>
-                {ring}
+              <Box 
+                sx={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  cursor: 'pointer' 
+                }}
+                onClick={() => handleExpandRing(ring)}
+              >
+                <Typography variant="h6" gutterBottom>
+                  {ring}
+                </Typography>
                 <IconButton size="small">
-                  <ExpandMoreIcon />
+                  <ExpandMoreIcon 
+                    sx={{ 
+                      transform: expandedRings[ring] ? 'rotate(180deg)' : 'rotate(0deg)',
+                      transition: theme.transitions.create('transform', {
+                        duration: theme.transitions.duration.shortest,
+                      }),
+                    }} 
+                  />
                 </IconButton>
-              </Typography>
-              <List>
-                {technologies.map((tech, index) => (
-                  <React.Fragment key={tech.id}>
-                    <ListItem>
-                      <ListItemText
-                        primary={`${tech.id}. ${tech.name}`}
-                        secondary={tech.description}
-                      />
-                    </ListItem>
-                    {index < technologies.length - 1 && <Divider />}
-                  </React.Fragment>
-                ))}
-              </List>
+              </Box>
+              <Collapse in={expandedRings[ring]}>
+                <List>
+                  {technologies.map((tech, index) => (
+                    <React.Fragment key={tech.id}>
+                      <ListItem>
+                        <ListItemText
+                          primary={`${tech.id}. ${tech.name}`}
+                          secondary={tech.description}
+                        />
+                      </ListItem>
+                      {index < technologies.length - 1 && <Divider />}
+                    </React.Fragment>
+                  ))}
+                </List>
+              </Collapse>
             </Box>
           ))}
         </Box>
