@@ -1,2 +1,4 @@
 - Add a shared constant file
-- Top align all page toolbars and burger menu
++ Top align all page toolbars and burger menu
+- In lists, use an ellipsis for long descriptions
+- Dialog text field label obscured

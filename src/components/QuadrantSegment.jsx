@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 import { Box, Paper, Typography, useTheme } from '@mui/material';
 import React, { useState, useEffect } from 'react';
 

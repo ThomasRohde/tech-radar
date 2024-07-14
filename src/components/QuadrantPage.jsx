@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 import React, { useState, useCallback, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {

@@ -23,6 +23,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import HomeIcon from '@mui/icons-material/Home';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import RadarIcon from '@mui/icons-material/Radar';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
 
 const SharedAppBar = ({ title, showBackButton = false, actionButton = null }) => {
@@ -56,6 +57,10 @@ const SharedAppBar = ({ title, showBackButton = false, actionButton = null }) =>
     }
   };
 
+  const handleBackNavigation = () => {
+    navigate(-1);
+  };
+
   const menuItems = [
     { text: 'Home', icon: <HomeIcon />, onClick: () => handleNavigation('/') },
     { text: 'Custom Radars', icon: <RadarIcon />, onClick: () => handleNavigation('/custom-radars') },
@@ -69,15 +74,27 @@ const SharedAppBar = ({ title, showBackButton = false, actionButton = null }) =>
           pl: { xs: theme.spacing(2), sm: theme.spacing(3) },
           pr: theme.spacing(2),
         }}>
-          <IconButton
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            onClick={handleDrawerToggle}
-            sx={{ mr: theme.spacing(2) }}
-          >
-            <MenuIcon />
-          </IconButton>
+          {showBackButton ? (
+            <IconButton
+              edge="start"
+              color="inherit"
+              aria-label="back"
+              onClick={handleBackNavigation}
+              sx={{ mr: theme.spacing(2) }}
+            >
+              <ArrowBackIcon />
+            </IconButton>
+          ) : (
+            <IconButton
+              edge="start"
+              color="inherit"
+              aria-label="menu"
+              onClick={handleDrawerToggle}
+              sx={{ mr: theme.spacing(2) }}
+            >
+              <MenuIcon />
+            </IconButton>
+          )}
           <Typography variant={isMobile ? "h6" : "h5"} component="h1" sx={{ flexGrow: 1, fontWeight: theme.typography.fontWeightMedium }}>
             {title}
           </Typography>
