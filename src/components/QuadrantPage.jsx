@@ -44,6 +44,7 @@ const QuadrantPage = () => {
   const { technologies } = useTechnologies();
   const [svgSize, setSvgSize] = useState(800);
   const [expandedTech, setExpandedTech] = useState(null);
+  const [hoveredTech, setHoveredTech] = useState(null);
 
   const quadrantId = parseInt(id, 10);
   const quadrantName = QUADRANTS[quadrantId];
@@ -84,6 +85,14 @@ const QuadrantPage = () => {
 
   const handleExpandTech = (techId) => {
     setExpandedTech(expandedTech === techId ? null : techId);
+  };
+
+  const handleMouseEnter = (tech) => {
+    setHoveredTech(tech);
+  };
+
+  const handleMouseLeave = () => {
+    setHoveredTech(null);
   };
 
   return (
@@ -165,6 +174,8 @@ const QuadrantPage = () => {
                       mb: 1,
                       borderRadius: 1,
                     }}
+                    onMouseEnter={() => handleMouseEnter(tech)}
+                    onMouseLeave={handleMouseLeave}
                   >
                     <ListItemButton onClick={() => handleExpandTech(tech.id)}>
                       <ListItemText
@@ -206,6 +217,7 @@ const QuadrantPage = () => {
             quadrantId={quadrantId}
             technologies={technologiesWithPositions}
             svgSize={svgSize}
+            hoveredTech={hoveredTech}
           />
         </Box>
       </Box>

@@ -1,10 +1,10 @@
 import { Box, Paper, Typography, useTheme } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const QuadrantSegment = ({ quadrantId, technologies, svgSize }) => {
+const QuadrantSegment = ({ quadrantId, technologies, svgSize, hoveredTech }) => {
   const theme = useTheme();
-  const [hoveredTech, setHoveredTech] = useState(null);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
+  const [showTooltip, setShowTooltip] = useState(false);
 
   const RINGS = ['Adopt', 'Trial', 'Assess', 'Hold'];
 
@@ -38,14 +38,17 @@ const QuadrantSegment = ({ quadrantId, technologies, svgSize }) => {
     }
   };
 
-  const handleMouseEnter = (tech, event) => {
-    setHoveredTech(tech);
-    setTooltipPosition({ x: event.clientX, y: event.clientY });
-  };
-
-  const handleMouseLeave = () => {
-    setHoveredTech(null);
-  };
+  useEffect(() => {
+    if (hoveredTech) {
+      const tech = technologies.find(t => t.id === hoveredTech.id);
+      if (tech) {
+        setTooltipPosition({ x: tech.position.x, y: tech.position.y });
+        setShowTooltip(true);
+      }
+    } else {
+      setShowTooltip(false);
+    }
+  }, [hoveredTech, technologies]);
 
   return (
     <Box sx={{ position: 'relative', width: svgSize, height: svgSize }}>
@@ -79,8 +82,6 @@ const QuadrantSegment = ({ quadrantId, technologies, svgSize }) => {
               <g
                 key={tech.id}
                 transform={`translate(${adjustedX}, ${adjustedY})`}
-                onMouseEnter={(e) => handleMouseEnter(tech, e)}
-                onMouseLeave={handleMouseLeave}
               >
                 <circle
                   r={svgSize / 50}
@@ -105,11 +106,11 @@ const QuadrantSegment = ({ quadrantId, technologies, svgSize }) => {
           })}
         </g>
       </svg>
-      {hoveredTech && (
+      {showTooltip && hoveredTech && (
         <Paper
           elevation={3}
           sx={{
-            position: "fixed",
+            position: "absolute",
             left: tooltipPosition.x,
             top: tooltipPosition.y,
             p: theme.spacing(2),
