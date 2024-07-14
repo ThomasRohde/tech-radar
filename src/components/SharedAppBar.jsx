@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import {
   AppBar,
@@ -26,7 +28,7 @@ import RadarIcon from '@mui/icons-material/Radar';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
 
-const SharedAppBar = ({ title, showBackButton = false, actionButton = null }) => {
+const SharedAppBar = ({ title, showBackButton = false, actionButton = null, onBackClick }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [username, setUsername] = useState('');
@@ -58,7 +60,11 @@ const SharedAppBar = ({ title, showBackButton = false, actionButton = null }) =>
   };
 
   const handleBackNavigation = () => {
-    navigate(-1);
+    if (onBackClick) {
+      onBackClick();
+    } else {
+      navigate(-1);
+    }
   };
 
   const menuItems = [

@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
 import React, { useState } from 'react';
 import {
   Box,
@@ -9,12 +7,8 @@ import {
   Typography,
   useTheme,
   useMediaQuery,
-  AppBar,
-  Toolbar,
-  IconButton
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useTechnologies } from './DataManager';
 import SharedAppBar from './SharedAppBar';
 import CustomRadarList from './CustomRadarList';
@@ -111,21 +105,11 @@ const CustomRadarPage = () => {
         onClose={handleCloseTechList}
         fullScreen={true}
       >
-        <AppBar sx={{ position: 'relative' }}>
-          <Toolbar>
-            <IconButton
-              edge="start"
-              color="inherit"
-              onClick={handleCloseTechList}
-              aria-label="close"
-            >
-              <ArrowBackIcon />
-            </IconButton>
-            <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-              Manage Technologies for {selectedRadar?.name}
-            </Typography>
-          </Toolbar>
-        </AppBar>
+        <SharedAppBar
+          title={`Manage Technologies for ${selectedRadar?.name}`}
+          showBackButton={true}
+          onBackClick={handleCloseTechList}
+        />
         <DialogContent>
           {selectedRadar && (
             <CustomRadarTechList
