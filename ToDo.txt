@@ -1,0 +1,2 @@
+- Add a shared constant file
+- Top align all page toolbars and burger menu

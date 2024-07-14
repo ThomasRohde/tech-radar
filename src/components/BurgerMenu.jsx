@@ -2,7 +2,8 @@ import {
   AdminPanelSettings as AdminIcon,
   Close as CloseIcon,
   Home as HomeIcon,
-  Menu as MenuIcon
+  Menu as MenuIcon,
+  RadioButtonChecked as RadarIcon  // Changed this line
 } from '@mui/icons-material';
 import {
   Box,
@@ -59,6 +60,7 @@ const BurgerMenu = () => {
 
   const menuItems = [
     { text: 'Home', icon: <HomeIcon />, onClick: () => handleNavigation('/') },
+    { text: 'Custom Radars', icon: <RadarIcon />, onClick: () => handleNavigation('/custom-radars') },
     { text: 'Admin', icon: <AdminIcon />, onClick: () => handleNavigation('/admin') },
   ];
 

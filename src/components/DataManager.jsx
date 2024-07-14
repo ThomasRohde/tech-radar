@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 
 const TechnologiesContext = createContext();
 
@@ -71,6 +72,7 @@ export const useTechnologies = () => {
 
 export const TechnologiesProvider = ({ children }) => {
     const [technologies, setTechnologies] = useState(null);
+    const [customRadars, setCustomRadars] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -89,6 +91,7 @@ export const TechnologiesProvider = ({ children }) => {
         loadTechnologies();
     }, []);
 
+    // Technology CRUD operations
     const addTechnology = (newTech) => {
         setTechnologies(prevTechs => [
             ...prevTechs,
@@ -126,6 +129,55 @@ export const TechnologiesProvider = ({ children }) => {
         );
     };
 
+    // Custom Radar CRUD operations
+    const addCustomRadar = (newRadar) => {
+        setCustomRadars(prevRadars => [
+            ...prevRadars,
+            { ...newRadar, id: Math.max(...prevRadars.map(r => r.id), 0) + 1, technologies: [] }
+        ]);
+    };
+
+    const updateCustomRadar = (updatedRadar) => {
+        setCustomRadars(prevRadars =>
+            prevRadars.map(radar => radar.id === updatedRadar.id ? { ...radar, ...updatedRadar } : radar)
+        );
+    };
+
+    const deleteCustomRadar = (id) => {
+        setCustomRadars(prevRadars => prevRadars.filter(radar => radar.id !== id));
+    };
+
+    const getCustomRadar = (id) => {
+        return customRadars.find(radar => radar.id === id);
+    };
+
+    const getAllCustomRadars = () => {
+        return customRadars;
+    };
+
+    // Custom Radar Technology Management
+    const addTechnologyToCustomRadar = (radarId, techId) => {
+        setCustomRadars(prevRadars =>
+            prevRadars.map(radar => {
+                if (radar.id === radarId && !radar.technologies.includes(techId)) {
+                    return { ...radar, technologies: [...radar.technologies, techId] };
+                }
+                return radar;
+            })
+        );
+    };
+
+    const removeTechnologyFromCustomRadar = (radarId, techId) => {
+        setCustomRadars(prevRadars =>
+            prevRadars.map(radar => {
+                if (radar.id === radarId) {
+                    return { ...radar, technologies: radar.technologies.filter(id => id !== techId) };
+                }
+                return radar;
+            })
+        );
+    };
+
     return (
         <TechnologiesContext.Provider value={{
             technologies: getActiveTechnologies(),
@@ -136,11 +188,23 @@ export const TechnologiesProvider = ({ children }) => {
             deleteTechnology,
             restoreTechnology,
             getTechnology,
-            getAllTechnologies
+            getAllTechnologies,
+            customRadars,
+            addCustomRadar,
+            updateCustomRadar,
+            deleteCustomRadar,
+            getCustomRadar,
+            getAllCustomRadars,
+            addTechnologyToCustomRadar,
+            removeTechnologyFromCustomRadar
         }}>
             {children}
         </TechnologiesContext.Provider>
     );
+};
+
+TechnologiesProvider.propTypes = {
+    children: PropTypes.node.isRequired,
 };
 
 export default TechnologiesProvider;

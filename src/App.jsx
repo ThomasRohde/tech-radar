@@ -6,7 +6,8 @@ import BurgerMenu from './components/BurgerMenu'
 import { TechnologiesProvider } from './components/DataManager'
 import QuadrantPage from './components/QuadrantPage'
 import Radar from './components/Radar'
-import theme from './theme'; // Import the new theme
+import CustomRadarPage from './components/CustomRadarPage'
+import theme from './theme'
 
 const globalStyles = (
   <GlobalStyles
@@ -57,6 +58,7 @@ function App() {
                 <Route path="/" element={<Radar />} />
                 <Route path="/admin" element={<AdminPage />} />
                 <Route path="/quadrant/:id" element={<QuadrantPage />} />
+                <Route path="/custom-radars" element={<CustomRadarPage />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             </Box>
