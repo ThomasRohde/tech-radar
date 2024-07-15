@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
 import React from "react";
 import {
   Typography as T,
@@ -10,6 +12,11 @@ import {
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 
 const DotIcon = () => <FiberManualRecordIcon fontSize="small" />;
+
+const getImagePath = (imageName) => {
+    return `/tech-radar/images/${imageName}`;
+  };
+  
 
 const sections = [
   {
@@ -29,9 +36,9 @@ const sections = [
         </T>
         <Box sx={{ my: 2, textAlign: "center" }}>
           <img
-            src="/images/radar_overview.png"
+            src={getImagePath('radar_overview.png')} 
             alt="Technology Radar Overview"
-            style={{ maxWidth: "100%", height: "auto" }}
+            style={{ maxWidth: "50%", height: "auto" }}
           />
         </Box>
       </>
@@ -49,13 +56,6 @@ const sections = [
           represents a technology, with its position indicating both its
           category (quadrant) and adoption level (ring).
         </T>
-        <Box sx={{ my: 2, textAlign: "center" }}>
-          <img
-            src="/images/main_view.png"
-            alt="Main Radar View"
-            style={{ maxWidth: "100%", height: "auto" }}
-          />
-        </Box>
         <T variant="h6" gutterBottom>
           Interacting with the Radar
         </T>
@@ -79,15 +79,8 @@ const sections = [
         <T paragraph>
           The quadrant view provides a detailed list of technologies within a
           specific category, along with a zoomed-in view of that quadrant on the
-          radar.
+          radar. Click on any quadrant label to go to the quadrant view.
         </T>
-        <Box sx={{ my: 2, textAlign: "center" }}>
-          <img
-            src="/images/quadrant_view.png"
-            alt="Quadrant View"
-            style={{ maxWidth: "100%", height: "auto" }}
-          />
-        </Box>
         <T variant="h6" gutterBottom>
           Custom Radars
         </T>
@@ -199,13 +192,6 @@ const sections = [
             </LI>
           ))}
         </List>
-        <Box sx={{ my: 2, textAlign: "center" }}>
-          <img
-            src="/images/blip_legend.png"
-            alt="Blip Legend"
-            style={{ maxWidth: "100%", height: "auto" }}
-          />
-        </Box>
       </>
     ),
   },
