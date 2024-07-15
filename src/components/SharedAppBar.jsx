@@ -27,6 +27,7 @@ import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import RadarIcon from '@mui/icons-material/Radar';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
+import Help from './Help';
 
 const SharedAppBar = ({ title, showBackButton = false, actionButton = null, onBackClick }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -105,6 +106,7 @@ const SharedAppBar = ({ title, showBackButton = false, actionButton = null, onBa
             {title}
           </Typography>
           {actionButton}
+          <Help /> {/* Add the Help component here */}
         </Toolbar>
       </AppBar>
 
