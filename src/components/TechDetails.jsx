@@ -17,10 +17,7 @@ import {
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import useTechnologies from './useTechnologies';
-
-const QUADRANTS = ["Tools", "Techniques", "Platforms", "Languages & Frameworks"];
-const RINGS = ["Adopt", "Trial", "Assess", "Hold"];
-const STATUSES = ["New", "Moved in/out", "No change"];
+import { QUADRANTS, RINGS, STATUSES } from '../constants';
 
 const TechDetails = ({ tech, onClose }) => {
   const { addTechnology, updateTechnology } = useTechnologies();

@@ -19,9 +19,7 @@ import {
 } from '@mui/material';
 import React, { useMemo, useState } from 'react';
 import useTechnologies from './useTechnologies';
-
-const QUADRANTS = ["Tools", "Techniques", "Platforms", "Languages & Frameworks"];
-const RINGS = ["Adopt", "Trial", "Assess", "Hold"];
+import { QUADRANTS, RINGS } from '../constants';
 
 const TechList = ({ onSelectTech }) => {
     const { getAllTechnologies, deleteTechnology, restoreTechnology } = useTechnologies();

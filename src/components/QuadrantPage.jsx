@@ -19,21 +19,7 @@ import QuadrantSegment from "./QuadrantSegment";
 import { calculateTechnologiesWithPositions } from '../utils/radarCalculations';
 import SharedAppBar from './SharedAppBar';
 import useRadarContext from './useRadarContext';
-
-const QUADRANTS = [
-  "Tools",
-  "Techniques",
-  "Platforms",
-  "Languages & Frameworks",
-];
-const RINGS = ["Adopt", "Trial", "Assess", "Hold"];
-
-const RING_DESCRIPTIONS = {
-  "Adopt": "Technologies we strongly recommend. They're proven, mature, and ready for use in our projects.",
-  "Trial": "Technologies worth pursuing. They've shown promise and we suggest trying them on projects that can handle the risk.",
-  "Assess": "Technologies worth exploring with the goal of understanding how they'll affect our organization.",
-  "Hold": "Technologies that are not recommended for new projects or continued investment, though they may be maintained for existing projects.",
-};
+import { QUADRANTS, RINGS, RING_DESCRIPTIONS } from '../constants';
 
 const QuadrantPage = () => {
   const { id } = useParams();

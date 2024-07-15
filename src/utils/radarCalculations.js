@@ -1,7 +1,6 @@
 // src/utils/radarCalculations.js
 
-// Global constants
-const RING_PADDING = 0.1; // Percentage of ring width to use as padding
+import { RING_PADDING } from '../constants';
 
 const getQuadrantAngles = (quadrantId) => {
     switch (quadrantId) {

@@ -21,15 +21,7 @@ import { calculateTechnologiesWithPositions } from "../utils/radarCalculations";
 import useTechnologies from "./useTechnologies";
 import SharedAppBar from "./SharedAppBar";
 import useRadarContext from './useRadarContext';
-
-const QUADRANTS = [
-  "Tools",
-  "Techniques",
-  "Platforms",
-  "Languages & Frameworks",
-];
-
-const RINGS = ["Adopt", "Trial", "Assess", "Hold"];
+import { QUADRANTS, RINGS, STATUSES } from '../constants';
 
 const TechnologyRadar = () => {
   const navigate = useNavigate();
