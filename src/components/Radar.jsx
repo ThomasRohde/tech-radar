@@ -178,7 +178,7 @@ const TechnologyRadar = () => {
               & {secondLine}
             </tspan>
           )}
-          <tspan dx="5">▶️</tspan>
+          <tspan dx="5">🔗</tspan>
         </text>
       </g>
     );
