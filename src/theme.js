@@ -105,6 +105,49 @@ let theme = createTheme({
     borderRadius: 4,
   },
   spacing: 8, // Base spacing unit of 8px
+  components: {
+    MuiDialog: {
+      styleOverrides: {
+        paper: {
+          backgroundColor: '#f5f5f5', // Light grey background for dialog
+        },
+      },
+    },
+    MuiDialogTitle: {
+      styleOverrides: {
+        root: {
+          backgroundColor: primaryMain,
+          color: '#ffffff',
+          padding: '16px 24px',
+        },
+      },
+    },
+    MuiDialogContent: {
+      styleOverrides: {
+        root: {
+          padding: '24px',
+        },
+      },
+    },
+    MuiTab: {
+      styleOverrides: {
+        root: {
+          '&.Mui-selected': {
+            color: primaryMain,
+          },
+        },
+      },
+    },
+    MuiList: {
+      styleOverrides: {
+        root: {
+          '& .MuiListItem-root': {
+            marginBottom: '8px',
+          },
+        },
+      },
+    },
+  },
 });
 
 // Apply responsive font sizes
