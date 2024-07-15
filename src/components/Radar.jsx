@@ -20,6 +20,7 @@ import { useNavigate } from "react-router-dom";
 import { calculateTechnologiesWithPositions } from "../utils/radarCalculations";
 import useTechnologies from "./useTechnologies";
 import SharedAppBar from "./SharedAppBar";
+import useRadarContext from './useRadarContext';
 
 const QUADRANTS = [
   "Tools",
@@ -42,22 +43,19 @@ const TechnologyRadar = () => {
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
   const isExtraSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const [svgSize, setSvgSize] = useState({ width: 800, height: 800 });
-  const [selectedRadarId, setSelectedRadarId] = useState("default");
-  const [radarData, setRadarData] = useState(null);
+  const { selectedRadarId, radarName, updateSelectedRadar } = useRadarContext();
 
   const customRadars = getAllCustomRadars();
 
-  useEffect(() => {
+  const radarData = useMemo(() => {
     if (selectedRadarId === "default") {
-      setRadarData(technologies);
+      return technologies;
     } else {
       const customRadar = getCustomRadar(parseInt(selectedRadarId));
       if (customRadar) {
-        const customTechnologies = technologies.filter((tech) =>
-          customRadar.technologies.includes(tech.id)
-        );
-        setRadarData(customTechnologies);
+        return technologies.filter((tech) => customRadar.technologies.includes(tech.id));
       }
+      return [];
     }
   }, [selectedRadarId, technologies, getCustomRadar]);
 
@@ -134,15 +132,6 @@ const TechnologyRadar = () => {
     }
   }, []);
 
-  const handleQuadrantClick = (quadrantIndex) => {
-    navigate(`/quadrant/${quadrantIndex}`, { 
-      state: { 
-        selectedRadarId: selectedRadarId, 
-        radarName: getCurrentRadarName() 
-      } 
-    });
-  };
-
   const QuadrantLabel = ({ quadrantIndex, children, onClick }) => {
     let x, y, textAnchor;
 
@@ -204,7 +193,14 @@ const TechnologyRadar = () => {
   };
 
   const handleRadarChange = (event) => {
-    setSelectedRadarId(event.target.value);
+    const newRadarId = event.target.value;
+    const newRadarName = newRadarId === "default" ? "Default Radar" : 
+      customRadars.find(radar => radar.id.toString() === newRadarId)?.name || "Unknown Radar";
+    updateSelectedRadar(newRadarId, newRadarName);
+  };
+
+  const handleQuadrantClick = (quadrantIndex) => {
+    navigate(`/quadrant/${quadrantIndex}`);
   };
 
   const getCurrentRadarName = () => {

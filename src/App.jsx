@@ -8,6 +8,7 @@ import QuadrantPage from './components/QuadrantPage'
 import Radar from './components/Radar'
 import CustomRadarPage from './components/CustomRadarPage'
 import theme from './theme'
+import { RadarProvider } from './components/RadarContext'
 
 const globalStyles = (
   <GlobalStyles
@@ -41,17 +42,19 @@ function App() {
       <CssBaseline />
       {globalStyles}
       <TechnologiesProvider>
-        <Router>
-          <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100vw' }}>
-            <Routes>
-              <Route path="/" element={<Radar />} />
-              <Route path="/admin" element={<AdminPage />} />
-              <Route path="/quadrant/:id" element={<QuadrantPage />} />
-              <Route path="/custom-radars" element={<CustomRadarPage />} />
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </Box>
-        </Router>
+        <RadarProvider>
+          <Router>
+            <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100vw' }}>
+              <Routes>
+                <Route path="/" element={<Radar />} />
+                <Route path="/admin" element={<AdminPage />} />
+                <Route path="/quadrant/:id" element={<QuadrantPage />} />
+                <Route path="/custom-radars" element={<CustomRadarPage />} />
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
+            </Box>
+          </Router>
+        </RadarProvider>
       </TechnologiesProvider>
     </ThemeProvider>
   )

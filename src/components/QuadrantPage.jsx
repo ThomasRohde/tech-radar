@@ -18,6 +18,7 @@ import useTechnologies from './useTechnologies';
 import QuadrantSegment from "./QuadrantSegment";
 import { calculateTechnologiesWithPositions } from '../utils/radarCalculations';
 import SharedAppBar from './SharedAppBar';
+import useRadarContext from './useRadarContext';
 
 const QUADRANTS = [
   "Tools",
@@ -36,20 +37,17 @@ const RING_DESCRIPTIONS = {
 
 const QuadrantPage = () => {
   const { id } = useParams();
-  const location = useLocation();
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { technologies, getCustomRadar } = useTechnologies();
+  const { selectedRadarId, radarName } = useRadarContext();
   const [svgSize, setSvgSize] = useState(800);
   const [expandedTech, setExpandedTech] = useState(null);
   const [hoveredTech, setHoveredTech] = useState(null);
 
   const quadrantId = parseInt(id, 10);
   const quadrantName = QUADRANTS[quadrantId];
-
-  // Extract the selected radar information from the location state
-  const { selectedRadarId, radarName } = location.state || { selectedRadarId: 'default', radarName: 'Default Radar' };
 
   const radarData = useMemo(() => {
     if (selectedRadarId === "default") {
