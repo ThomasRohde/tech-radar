@@ -378,23 +378,24 @@ const TechnologyRadar = () => {
               stroke={theme.palette.divider}
               strokeWidth="2"
             />
-            {!isExtraSmallScreen &&
-              RINGS.map((ring, index) => (
-                <text
-                  key={ring}
-                  x={svgSize.width / 2 + 10}
-                  y={
-                    (4 - index) *
-                      (Math.min(svgSize.width, svgSize.height) / 8) -
-                    5
-                  }
-                  fontSize={theme.typography.caption.fontSize}
-                  textAnchor="start"
-                  fill={theme.palette.text.secondary}
-                >
-                  {ring}
-                </text>
-              ))}
+{!isExtraSmallScreen &&
+  RINGS.map((ring, index) => (
+    <text
+      key={ring}
+      x={svgSize.width / 2 + 10}
+      y={
+        (4 - index) *
+          (Math.min(svgSize.width, svgSize.height) / 8) -
+        5
+      }
+      fontSize={theme.typography.subtitle1.fontSize} // Changed from caption to subtitle1
+      fontWeight={theme.typography.subtitle1.fontWeight} // Added fontWeight for better visibility
+      textAnchor="start"
+      fill={theme.palette.text.primary} // Changed from secondary to primary for better contrast
+    >
+      {ring}
+    </text>
+  ))}
             {!isExtraSmallScreen &&
               QUADRANTS.map((quadrantName, index) => (
                 <QuadrantLabel

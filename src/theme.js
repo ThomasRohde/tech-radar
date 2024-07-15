@@ -64,7 +64,7 @@ let theme = createTheme({
       letterSpacing: '0.0075em',
     },
     subtitle1: {
-      fontSize: '1rem',
+      fontSize: '1.5rem',
       fontWeight: 400,
       letterSpacing: '0.00938em',
     },
