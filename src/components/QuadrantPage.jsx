@@ -1,7 +1,5 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
 import React, { useState, useCallback, useMemo } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import {
   Box,
   List,
@@ -38,10 +36,11 @@ const RING_DESCRIPTIONS = {
 
 const QuadrantPage = () => {
   const { id } = useParams();
+  const location = useLocation();
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const { technologies } = useTechnologies();
+  const { technologies, getCustomRadar } = useTechnologies();
   const [svgSize, setSvgSize] = useState(800);
   const [expandedTech, setExpandedTech] = useState(null);
   const [hoveredTech, setHoveredTech] = useState(null);
@@ -49,9 +48,24 @@ const QuadrantPage = () => {
   const quadrantId = parseInt(id, 10);
   const quadrantName = QUADRANTS[quadrantId];
 
+  // Extract the selected radar information from the location state
+  const { selectedRadarId, radarName } = location.state || { selectedRadarId: 'default', radarName: 'Default Radar' };
+
+  const radarData = useMemo(() => {
+    if (selectedRadarId === "default") {
+      return technologies;
+    } else {
+      const customRadar = getCustomRadar(parseInt(selectedRadarId));
+      if (customRadar) {
+        return technologies.filter((tech) => customRadar.technologies.includes(tech.id));
+      }
+      return [];
+    }
+  }, [selectedRadarId, technologies, getCustomRadar]);
+
   const quadrantTechnologies = useMemo(() => 
-    technologies.filter((tech) => tech.quadrantId === quadrantId),
-    [technologies, quadrantId]
+    radarData.filter((tech) => tech.quadrantId === quadrantId),
+    [radarData, quadrantId]
   );
 
   const technologiesByRing = useMemo(() => 
@@ -103,7 +117,7 @@ const QuadrantPage = () => {
       bgcolor: theme.palette.background.default,
     }}>
       <SharedAppBar 
-        title={`${quadrantName} Quadrant`}
+        title={`${quadrantName} Quadrant - ${radarName}`}
         showBackButton={true}
       />
 

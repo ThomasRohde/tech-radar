@@ -135,7 +135,12 @@ const TechnologyRadar = () => {
   }, []);
 
   const handleQuadrantClick = (quadrantIndex) => {
-    navigate(`/quadrant/${quadrantIndex}`);
+    navigate(`/quadrant/${quadrantIndex}`, { 
+      state: { 
+        selectedRadarId: selectedRadarId, 
+        radarName: getCurrentRadarName() 
+      } 
+    });
   };
 
   const QuadrantLabel = ({ quadrantIndex, children, onClick }) => {
