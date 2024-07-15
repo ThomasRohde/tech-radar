@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo } from "react";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   Box,
   List,
@@ -37,7 +37,6 @@ const RING_DESCRIPTIONS = {
 
 const QuadrantPage = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { technologies, getCustomRadar } = useTechnologies();

@@ -1,4 +1,3 @@
-# Project Structure: tech-radar
 .
 ├── Environment variables.txt
 ├── Project structure.md
@@ -27,9 +26,11 @@
 │   │   ├── QuadrantPage.jsx
 │   │   ├── QuadrantSegment.jsx
 │   │   ├── Radar.jsx
+│   │   ├── RadarContext.jsx
 │   │   ├── SharedAppBar.jsx
 │   │   ├── TechDetails.jsx
 │   │   ├── TechList.jsx
+│   │   ├── useRadarContext.js
 │   │   └── useTechnologies.js
 │   ├── index.css
 │   ├── main.jsx
@@ -38,4 +39,4 @@
 │       └── radarCalculations.js
 └── vite.config.js
 
-6 directories, 32 files
+6 directories, 34 files
