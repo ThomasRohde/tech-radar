@@ -17,7 +17,7 @@ import {
     Typography,
     useTheme
 } from '@mui/material';
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useRef, useEffect } from 'react';
 import useTechnologies from './useTechnologies';
 import { QUADRANTS, RINGS } from '../constants';
 
@@ -27,6 +27,8 @@ const TechList = ({ onSelectTech }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [ringFilter, setRingFilter] = useState('');
     const [quadrantFilter, setQuadrantFilter] = useState('');
+    const [truncateLength, setTruncateLength] = useState(60);
+    const containerRef = useRef(null);
     const theme = useTheme();
 
     const allTechnologies = getAllTechnologies();
@@ -53,6 +55,28 @@ const TechList = ({ onSelectTech }) => {
         const colors = [theme.palette.primary.main, theme.palette.secondary.main, theme.palette.error.main, theme.palette.warning.main];
         return colors[quadrantId];
     };
+
+    const truncateDescription = (description) => {
+        return description.length > truncateLength ? description.substring(0, truncateLength) + '...' : description;
+    };
+
+    useEffect(() => {
+        const calculateTruncateLength = () => {
+            if (containerRef.current) {
+                const containerWidth = containerRef.current.offsetWidth;
+                // Adjust this calculation as needed based on your font size and desired truncation
+                const newTruncateLength = Math.floor(containerWidth / 8);
+                setTruncateLength(newTruncateLength);
+            }
+        };
+    
+        calculateTruncateLength();
+        window.addEventListener('resize', calculateTruncateLength);
+    
+        return () => {
+            window.removeEventListener('resize', calculateTruncateLength);
+        };
+    }, []);
 
     const formControlStyle = {
         minWidth: '120px',
@@ -82,7 +106,7 @@ const TechList = ({ onSelectTech }) => {
     
 
     return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }} ref={containerRef}>
             <Box sx={{ 
                 mb: 2, 
                 display: 'flex', 
@@ -167,7 +191,7 @@ const TechList = ({ onSelectTech }) => {
                                             >
                                                 Ring: {tech.ring}
                                             </Typography>
-                                            {` — ${tech.description}`}
+                                            {` — ${truncateDescription(tech.description)}`}
                                         </React.Fragment>
                                     }
                                 />
