@@ -11,11 +11,14 @@ import {
   Typography,
   useMediaQuery,
   useTheme,
+  FormControl,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { calculateTechnologiesWithPositions } from "../utils/radarCalculations";
-import useTechnologies from './useTechnologies';
+import useTechnologies from "./useTechnologies";
 import SharedAppBar from "./SharedAppBar";
 
 const QUADRANTS = [
@@ -29,7 +32,8 @@ const RINGS = ["Adopt", "Trial", "Assess", "Hold"];
 
 const TechnologyRadar = () => {
   const navigate = useNavigate();
-  const { technologies, loading, error } = useTechnologies();
+  const { technologies, loading, error, getAllCustomRadars, getCustomRadar } =
+    useTechnologies();
   const [hoveredTech, setHoveredTech] = useState(null);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
   const radarRef = useRef(null);
@@ -38,6 +42,29 @@ const TechnologyRadar = () => {
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
   const isExtraSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const [svgSize, setSvgSize] = useState({ width: 800, height: 800 });
+  const [selectedRadarId, setSelectedRadarId] = useState("default");
+  const [radarData, setRadarData] = useState(null);
+
+  const customRadars = getAllCustomRadars();
+
+  useEffect(() => {
+    if (selectedRadarId === "default") {
+      setRadarData(technologies);
+    } else {
+      const customRadar = getCustomRadar(parseInt(selectedRadarId));
+      if (customRadar) {
+        const customTechnologies = technologies.filter((tech) =>
+          customRadar.technologies.includes(tech.id)
+        );
+        setRadarData(customTechnologies);
+      }
+    }
+  }, [selectedRadarId, technologies, getCustomRadar]);
+
+  const technologiesWithPositions = useMemo(
+    () => calculateTechnologiesWithPositions(radarData, svgSize, RINGS),
+    [radarData, svgSize]
+  );
 
   const updateSize = () => {
     if (containerRef.current) {
@@ -49,16 +76,16 @@ const TechnologyRadar = () => {
 
   useEffect(() => {
     updateSize();
-  
+
     const resizeObserver = new ResizeObserver(updateSize);
     const currentContainer = containerRef.current;
-  
+
     if (currentContainer) {
       resizeObserver.observe(currentContainer);
     }
-  
+
     window.addEventListener("resize", updateSize);
-  
+
     return () => {
       if (currentContainer) {
         resizeObserver.unobserve(currentContainer);
@@ -66,11 +93,6 @@ const TechnologyRadar = () => {
       window.removeEventListener("resize", updateSize);
     };
   }, []);
-
-  const technologiesWithPositions = useMemo(
-    () => calculateTechnologiesWithPositions(technologies, svgSize, RINGS),
-    [svgSize, technologies]
-  );
 
   const getColor = (quadrantIndex) => {
     const colors = [
@@ -176,6 +198,21 @@ const TechnologyRadar = () => {
     );
   };
 
+  const handleRadarChange = (event) => {
+    setSelectedRadarId(event.target.value);
+  };
+
+  const getCurrentRadarName = () => {
+    if (selectedRadarId === "default") {
+      return "Default Radar";
+    } else {
+      const customRadar = customRadars.find(
+        (radar) => radar.id === parseInt(selectedRadarId)
+      );
+      return customRadar ? customRadar.name : "Unknown Radar";
+    }
+  };
+
   if (loading) {
     return (
       <Box
@@ -252,6 +289,47 @@ const TechnologyRadar = () => {
             overflow: "hidden",
           }}
         >
+          <Box
+            sx={{
+              p: 1,
+              width: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexWrap: "wrap",
+              gap: 1,
+            }}
+          >
+            <FormControl sx={{ minWidth: 150 }}>
+              <Select
+                value={selectedRadarId}
+                onChange={handleRadarChange}
+                size="small"
+                displayEmpty
+              >
+                <MenuItem value="default">Default Radar</MenuItem>
+                {customRadars.map((radar) => (
+                  <MenuItem key={radar.id} value={radar.id.toString()}>
+                    {radar.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <Paper
+              elevation={1}
+              sx={{
+                px: 1,
+                py: 0.5,
+                backgroundColor: theme.palette.primary.main,
+                color: theme.palette.primary.contrastText,
+                display: "flex",
+                alignItems: "center",
+                height: "40px", // Match the height of the small Select component
+              }}
+            >
+              <Typography variant="body2">{getCurrentRadarName()}</Typography>
+            </Paper>
+          </Box>
           <Box
             ref={radarRef}
             component="svg"
