@@ -22,6 +22,8 @@ import useTechnologies from "./useTechnologies";
 import SharedAppBar from "./SharedAppBar";
 import useRadarContext from './useRadarContext';
 import { QUADRANTS, RINGS, STATUSES } from '../constants';
+import RadarSVG from './RadarSVG';
+import TechTooltip from './TechTooltip';
 
 const TechnologyRadar = () => {
   const navigate = useNavigate();
@@ -247,59 +249,13 @@ const TechnologyRadar = () => {
   }
 
   return (
-    <Box
-      sx={{
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        backgroundColor: theme.palette.background.default,
-        overflow: "hidden",
-      }}
-    >
+    <Box sx={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", backgroundColor: theme.palette.background.default, overflow: "hidden" }}>
       <SharedAppBar title="Technology Radar" />
-      <Box
-        sx={{
-          flexGrow: 1,
-          display: "flex",
-          flexDirection: isSmallScreen ? "column" : "row",
-          height: "100%",
-          width: "100%",
-          overflow: "hidden",
-        }}
-      >
-        <Box
-          ref={containerRef}
-          sx={{
-            flex: 1,
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            position: "relative",
-            height: "100%",
-            width: "100%",
-            overflow: "hidden",
-          }}
-        >
-          <Box
-            sx={{
-              p: 1,
-              width: "100%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              flexWrap: "wrap",
-              gap: 1,
-            }}
-          >
+      <Box sx={{ flexGrow: 1, display: "flex", flexDirection: isSmallScreen ? "column" : "row", height: "100%", width: "100%", overflow: "hidden" }}>
+        <Box ref={containerRef} sx={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", position: "relative", height: "100%", width: "100%", overflow: "hidden" }}>
+          <Box sx={{ p: 1, width: "100%", display: "flex", alignItems: "center", justifyContent: "center", flexWrap: "wrap", gap: 1 }}>
             <FormControl sx={{ minWidth: 150 }}>
-              <Select
-                value={selectedRadarId}
-                onChange={handleRadarChange}
-                size="small"
-                displayEmpty
-              >
+              <Select value={selectedRadarId} onChange={handleRadarChange} size="small" displayEmpty>
                 <MenuItem value="default">Default Radar</MenuItem>
                 {customRadars.map((radar) => (
                   <MenuItem key={radar.id} value={radar.id.toString()}>
@@ -308,169 +264,34 @@ const TechnologyRadar = () => {
                 ))}
               </Select>
             </FormControl>
-            <Paper
-              elevation={1}
-              sx={{
-                px: 1,
-                py: 0.5,
-                backgroundColor: theme.palette.primary.main,
-                color: theme.palette.primary.contrastText,
-                display: "flex",
-                alignItems: "center",
-                height: "40px", // Match the height of the small Select component
-              }}
-            >
+            <Paper elevation={1} sx={{ px: 1, py: 0.5, backgroundColor: theme.palette.primary.main, color: theme.palette.primary.contrastText, display: "flex", alignItems: "center", height: "40px" }}>
               <Typography variant="body2">{getCurrentRadarName()}</Typography>
             </Paper>
           </Box>
-          <Box
-            ref={radarRef}
-            component="svg"
-            width={svgSize.width}
-            height={svgSize.height}
-            viewBox={`0 0 ${svgSize.width} ${svgSize.height}`}
-            preserveAspectRatio="xMidYMid meet"
-            sx={{ maxWidth: "100%", maxHeight: "100%" }}
-          >
-            <rect
-              width={svgSize.width}
-              height={svgSize.height}
-              fill={theme.palette.background.default}
+          <Box ref={radarRef}>
+            <RadarSVG
+              svgSize={svgSize}
+              technologiesWithPositions={technologiesWithPositions}
+              handleQuadrantClick={handleQuadrantClick}
+              getColor={getColor}
+              getStatusFill={getStatusFill}
+              setHoveredTech={setHoveredTech}
+              isExtraSmallScreen={isExtraSmallScreen}
             />
-            <circle
-              cx={svgSize.width / 2}
-              cy={svgSize.height / 2}
-              r={Math.min(svgSize.width, svgSize.height) / 2}
-              fill={theme.palette.background.paper}
-            />
-            {RINGS.map((_, index) => (
-              <circle
-                key={index}
-                cx={svgSize.width / 2}
-                cy={svgSize.height / 2}
-                r={(4 - index) * (Math.min(svgSize.width, svgSize.height) / 8)}
-                fill="none"
-                stroke={theme.palette.divider}
-                strokeWidth="2"
-              />
-            ))}
-            <line
-              x1="0"
-              y1={svgSize.height / 2}
-              x2={svgSize.width}
-              y2={svgSize.height / 2}
-              stroke={theme.palette.divider}
-              strokeWidth="2"
-            />
-            <line
-              x1={svgSize.width / 2}
-              y1="0"
-              x2={svgSize.width / 2}
-              y2={svgSize.height}
-              stroke={theme.palette.divider}
-              strokeWidth="2"
-            />
-{!isExtraSmallScreen &&
-  RINGS.map((ring, index) => (
-    <text
-      key={ring}
-      x={svgSize.width / 2 + 10}
-      y={
-        (4 - index) *
-          (Math.min(svgSize.width, svgSize.height) / 8) -
-        5
-      }
-      fontSize={theme.typography.subtitle1.fontSize} // Changed from caption to subtitle1
-      fontWeight={theme.typography.subtitle1.fontWeight} // Added fontWeight for better visibility
-      textAnchor="start"
-      fill={theme.palette.text.primary} // Changed from secondary to primary for better contrast
-    >
-      {ring}
-    </text>
-  ))}
-            {!isExtraSmallScreen &&
-              QUADRANTS.map((quadrantName, index) => (
-                <QuadrantLabel
-                  key={index}
-                  quadrantIndex={index}
-                  onClick={() => handleQuadrantClick(index)}
-                >
-                  {quadrantName}
-                </QuadrantLabel>
-              ))}
-            {technologiesWithPositions.map((tech) => {
-              const { x, y } = tech.position;
-              return (
-                <g
-                  key={tech.id}
-                  onMouseEnter={() => setHoveredTech(tech)}
-                  onMouseLeave={() => setHoveredTech(null)}
-                >
-                  <circle
-                    cx={x}
-                    cy={y}
-                    r={Math.min(svgSize.width, svgSize.height) / 50}
-                    fill={getColor(tech.quadrantId)}
-                    stroke={theme.palette.background.paper}
-                    strokeWidth="1"
-                  />
-                  <circle
-                    cx={x}
-                    cy={y}
-                    r={Math.min(svgSize.width, svgSize.height) / 70}
-                    fill={getStatusFill(tech.status)}
-                  />
-                  <text
-                    x={x}
-                    y={y}
-                    textAnchor="middle"
-                    dominantBaseline="central"
-                    fill={theme.palette.background.paper}
-                    fontSize={theme.typography.caption.fontSize}
-                  >
-                    {tech.id}
-                  </text>
-                </g>
-              );
-            })}
           </Box>
         </Box>
-
-        <Box
-          sx={{
-            width: isSmallScreen ? "100%" : "300px",
-            mt: isSmallScreen ? theme.spacing(2) : theme.spacing(8),
-            ml: isSmallScreen ? 0 : theme.spacing(2),
-            mr: theme.spacing(2), // Added right margin
-            flexShrink: 0,
-            overflowY: "auto",
-            maxHeight: isSmallScreen ? "30vh" : "calc(100% - 64px)",
-            pt: theme.spacing(2),
-            pb: theme.spacing(2), // Added bottom padding for consistency
-          }}
-        >
+  
+        <Box sx={{ width: isSmallScreen ? "100%" : "300px", mt: isSmallScreen ? theme.spacing(2) : theme.spacing(8), ml: isSmallScreen ? 0 : theme.spacing(2), mr: theme.spacing(2), flexShrink: 0, overflowY: "auto", maxHeight: isSmallScreen ? "30vh" : "calc(100% - 64px)", pt: theme.spacing(2), pb: theme.spacing(2) }}>
           <Paper sx={{ p: theme.spacing(2) }}>
             <Typography variant="h6" gutterBottom>
               Status Legend
             </Typography>
             <List dense>
-              {["New", "Moved in/out", "No change"].map((status) => (
+              {STATUSES.map((status) => (
                 <ListItem key={status}>
                   <ListItemIcon>
-                    <Box
-                      component="svg"
-                      width={20}
-                      height={20}
-                      viewBox="0 0 20 20"
-                    >
-                      <circle
-                        cx="10"
-                        cy="10"
-                        r="8"
-                        fill={getStatusFill(status)}
-                        stroke={theme.palette.background.paper}
-                        strokeWidth="2"
-                      />
+                    <Box component="svg" width={20} height={20} viewBox="0 0 20 20">
+                      <circle cx="10" cy="10" r="8" fill={getStatusFill(status)} stroke={theme.palette.background.paper} strokeWidth="2" />
                     </Box>
                   </ListItemIcon>
                   <ListItemText primary={status} />
@@ -480,45 +301,8 @@ const TechnologyRadar = () => {
           </Paper>
         </Box>
       </Box>
-
-      {hoveredTech && (
-        <Paper
-          elevation={3}
-          sx={{
-            position: "absolute",
-            left: tooltipPosition.x,
-            top: tooltipPosition.y,
-            p: theme.spacing(2),
-            maxWidth: 300,
-            transform: "translate(10px, 10px)",
-            zIndex: theme.zIndex.tooltip,
-            pointerEvents: "none",
-            backgroundColor: theme.palette.background.paper,
-          }}
-        >
-          <Typography variant="h6" gutterBottom>
-            {hoveredTech.name}
-          </Typography>
-          <Typography variant="body2">
-            <strong>Quadrant:</strong> {QUADRANTS[hoveredTech.quadrantId]}
-          </Typography>
-          <Typography variant="body2">
-            <strong>Ring:</strong> {hoveredTech.ring}
-          </Typography>
-          <Typography variant="body2">
-            <strong>Status:</strong> {hoveredTech.status}
-          </Typography>
-          <Typography variant="body2">
-            <strong>Description:</strong> {hoveredTech.description}
-          </Typography>
-          <Typography variant="body2">
-            <strong>Sponsor:</strong> {hoveredTech.sponsor}
-          </Typography>
-          <Typography variant="body2">
-            <strong>Date Added:</strong> {hoveredTech.date}
-          </Typography>
-        </Paper>
-      )}
+  
+      <TechTooltip tech={hoveredTech} position={tooltipPosition} />
     </Box>
   );
 };
