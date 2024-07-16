@@ -126,66 +126,6 @@ const TechnologyRadar = () => {
     }
   }, []);
 
-  const QuadrantLabel = ({ quadrantIndex, children, onClick }) => {
-    let x, y, textAnchor;
-
-    switch (quadrantIndex) {
-      case 0: // Tools
-        x = svgSize.width - 10;
-        y = 30;
-        textAnchor = "end";
-        break;
-      case 1: // Techniques
-        x = 10;
-        y = 30;
-        textAnchor = "start";
-        break;
-      case 2: // Platforms
-        x = 10;
-        y = svgSize.height - 20;
-        textAnchor = "start";
-        break;
-      case 3: // Languages & Frameworks
-        x = svgSize.width - 10;
-        y = svgSize.height - 45;
-        textAnchor = "end";
-        break;
-      default:
-        x = 0;
-        y = 0;
-        textAnchor = "start";
-    }
-
-    const multiline = children === "Languages & Frameworks";
-    const [firstLine, secondLine] = multiline
-      ? children.split(" & ")
-      : [children];
-
-    return (
-      <g
-        onClick={() => handleQuadrantClick(quadrantIndex)}
-        style={{ cursor: "pointer" }}
-      >
-        <text
-          x={x}
-          y={y}
-          fontSize={theme.typography.subtitle1.fontSize}
-          fontWeight={theme.typography.subtitle1.fontWeight}
-          fill={theme.palette.text.primary}
-          textAnchor={textAnchor}
-        >
-          {firstLine}
-          {multiline && (
-            <tspan x={x} dy="1.2em">
-              & {secondLine}
-            </tspan>
-          )}
-          <tspan dx="5">🔗</tspan>
-        </text>
-      </g>
-    );
-  };
-
   const handleRadarChange = (event) => {
     const newRadarId = event.target.value;
     const newRadarName = newRadarId === "default" ? "Default Radar" : 
