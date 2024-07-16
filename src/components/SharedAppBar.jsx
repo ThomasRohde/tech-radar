@@ -26,6 +26,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import RadarIcon from '@mui/icons-material/Radar';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import GitHubIcon from '@mui/icons-material/GitHub'; // Add this import
 import { useNavigate } from 'react-router-dom';
 import Help from './Help';
 
@@ -106,7 +107,16 @@ const SharedAppBar = ({ title, showBackButton = false, actionButton = null, onBa
             {title}
           </Typography>
           {actionButton}
-          <Help /> {/* Add the Help component here */}
+          <IconButton
+            color="inherit"
+            aria-label="github"
+            href="https://github.com/ThomasRohde/tech-radar"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <GitHubIcon />
+          </IconButton>
+          <Help />
         </Toolbar>
       </AppBar>
 
